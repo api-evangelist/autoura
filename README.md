@@ -1,42 +1,71 @@
 # Autoura (autoura)
-Autoura is a technology company that specializes in creating innovative solutions for the tourism and travel industry. They develop cutting-edge software and mobile applications to enhance the overall travel experience for both tourists and industry professionals. Autoura's platform provides users with personalized recommendations, interactive maps, and real-time updates on local attractions and events. By harnessing the power of data and technology, Autoura enables travelers to discover new destinations and experiences with ease, while helping businesses in the travel sector to streamline their operations and connect with a global audience. Whether you are a traveler looking for exciting adventures or a travel company seeking to expand your reach, Autoura is dedicated to making the world of travel more accessible, enjoyable, and sustainable for all.
 
-**URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-evangelist/autoura/refs/heads/main/apis.yml)
+Autoura is a digital experience platform for real-world tourism and travel experiences. They develop software and APIs that enable travel companies, destination management organizations, and developers to access and integrate tourism content including destination information, tour itineraries, cuisine guides, activities, and interactive local experience recommendations.
 
-## Scope
+**URL:** [https://www.autoura.com](https://www.autoura.com)
 
-- **Type:** Index 
-- **Position:** Consumer 
-- **Access:** 3rd-Party 
+**Run:** [Capabilities Using Naftiko](https://github.com/naftiko/fleet?utm_source=api-evangelist&utm_medium=readme&utm_campaign=company-api-evangelist&utm_content=repo)
 
-## Tags:
+## Tags
 
- - Tourism, Tours, Travel
+ - Tourism, Tours, Travel, Destinations, Experiences, Digital Tourism
 
 ## Timestamps
 
-- **Created:** 2025-03-01 
-- **Modified:** 2025-03-01 
+- **Created:** 2025-03-01
+- **Modified:** 2026-04-19
 
 ## APIs
 
-### Autoura API
-Autoura API is a powerful tool that allows developers to seamlessly integrate travel and tourism-related content into their applications. With Autoura API, developers can access a wide range of resources including destination information, tour itineraries, activities, and more. This allows for the creation of interactive and engaging travel experiences for users. By leveraging Autoura API, developers can provide their users with up-to-date and reliable travel information, ultimately enhancing the overall user experience. Whether it's building a travel planning app or incorporating travel recommendations into an existing platform, Autoura API provides the tools and resources necessary to take travel applications to the next level.
+### Autoura Experience API
 
-**Human URL:** [ https://www.autoura.com/docs/api/cuisines]( https://www.autoura.com/docs/api/cuisines)
+The Autoura Experience API provides access to tourism content including cuisine guides, destination information, tour itineraries, local activities, and points of interest. Developers can integrate Autoura content into travel applications and tourism websites.
 
+**Human URL:** [https://www.autoura.com/docs/api/cuisines](https://www.autoura.com/docs/api/cuisines)
 
-#### Tags:
+#### Tags
 
- - Tourism, Tours, Travel
+ - Tourism, Tours, Travel, Destinations, Activities, Cuisine
 
 #### Properties
 
-- [Documentation]( https://www.autoura.com/docs/api/cuisines)
+- [Documentation](https://www.autoura.com/docs/api/cuisines)
+- [Website](https://www.autoura.com)
+
+## Common Properties
+
+- [Website](https://www.autoura.com)
+- [Documentation](https://www.autoura.com/docs/api/cuisines)
+
+## Features
+
+| Name | Description |
+|------|-------------|
+| Destination Content API | Access rich destination content including local attractions, points of interest, neighborhood guides, and cultural highlights for tourism applications and travel content platforms. |
+| Cuisine and Food Guide API | Comprehensive cuisine data including local dishes, restaurant types, food tours, and gastronomic experience recommendations for culinary tourism applications. |
+| Tour Itineraries | Pre-built tour itineraries and self-guided tour content for destinations, enabling travel apps to offer structured sightseeing experiences. |
+| Activity Recommendations | Activity and experience data for destinations including outdoor activities, cultural experiences, adventure tourism, and seasonal events. |
+| Personalized Recommendations | Context-aware recommendation engine for suggesting local experiences based on traveler preferences, location, and time of visit. |
+
+## Use Cases
+
+| Name | Description |
+|------|-------------|
+| Travel App Integration | Integrate Autoura destination content into travel booking apps and tourism portals to enhance destination discovery and trip planning. |
+| Destination Marketing | Destination management organizations embed Autoura experience content into tourism websites to promote local attractions and activities. |
+| Culinary Tourism | Food and travel platforms use the Cuisine API to build gastronomic guides and food tour features for culinary travelers. |
+| Digital Tour Guide Apps | Build digital tour guide applications with self-guided audio tours, interactive maps, and Autoura destination content. |
+
+## Integrations
+
+| Name | Description |
+|------|-------------|
+| Booking Platforms | Integration with travel booking platforms to surface Autoura activity and experience content alongside accommodation and transport bookings. |
+| Mapping Services | Combine Autoura POI and destination content with Google Maps, Mapbox, or Apple Maps for location-aware tourism applications. |
+| CMS Platforms | Embed Autoura destination content into CMS-based tourism websites using API integrations for dynamic content delivery. |
 
 ## Maintainers
 
 **FN:** Kin Lane
 
-**Email:** info@apievangelist.com
-
+**Email:** kin@apievangelist.com
