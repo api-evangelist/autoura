@@ -45,6 +45,10 @@ apis:
         url: https://www.autoura.com
 
 common:
+  - type: GitHubOrganization
+    url: https://github.com/Autoura
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/autoura
   - type: Website
     url: https://www.autoura.com
   - type: Documentation
