@@ -109,6 +109,8 @@ common:
         description: >-
           Embed Autoura destination content into CMS-based tourism websites
           using API integrations for dynamic content delivery.
+  - type: LLMsTxt
+    url: https://www.autoura.com/llms.txt
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
