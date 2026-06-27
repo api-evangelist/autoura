@@ -109,7 +109,7 @@ common:
         description: >-
           Embed Autoura destination content into CMS-based tourism websites
           using API integrations for dynamic content delivery.
-  - type: LLMsTxt
+  - type: LlmsText
     url: https://www.autoura.com/llms.txt
 maintainers:
   - FN: Kin Lane
