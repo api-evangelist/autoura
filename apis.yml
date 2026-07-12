@@ -45,6 +45,8 @@ apis:
         url: https://www.autoura.com
 
 common:
+  - type: DomainSecurity
+    url: security/autoura-domain-security.yml
   - type: GitHubOrganization
     url: https://github.com/Autoura
   - type: LinkedIn
