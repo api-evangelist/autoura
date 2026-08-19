@@ -32,7 +32,7 @@ created: '2025-03-01'
 modified: '2026-04-19'
 url: >-
   https://raw.githubusercontent.com/api-evangelist/autoura/refs/heads/main/apis.yml
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 apis:
   - aid: autoura:autoura-api
     name: Autoura Experience API
