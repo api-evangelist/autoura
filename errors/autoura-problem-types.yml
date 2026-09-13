@@ -1,0 +1,126 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/docs/api/concepts
+docs:
+  - https://www.autoura.com/docs/api/concepts
+  - https://www.planmyvisit.to/docs/ai/authentication.md
+format: proprietary-success-flag
+rfc9457: false
+note: >-
+  Autoura publishes no OpenAPI, so nothing here was derived from 4xx/5xx responses in
+  a spec. The envelope shape is taken from Autoura's own "Important concepts" page,
+  the identity errors from its agent authentication reference, and the 401 body was
+  observed live on 2026-09-13. Autoura does not publish a numbered error-code
+  registry -- there is no code column to harvest, which is itself the finding.
+envelope:
+  fields:
+    - name: success
+      type: boolean
+      always_present: true
+      semantics: >-
+        false means the request failed for a TECHNICAL reason. true means the request
+        succeeded technically; a business outcome (no availability, a declined card)
+        may still have failed and is reported in operation-specific fields.
+    - name: error_title
+      type: string
+      language: English only
+      semantics: short error label; documented as log-not-display
+    - name: error_body
+      type: string
+      language: English only
+      semantics: additional detail; documented as log-not-display
+    - name: error_message
+      type: string
+      observed: true
+      note: >-
+        The live 401 returns error_message rather than the documented error_body.
+        Recorded as observed drift between the reference and the running API, not
+        corrected in either direction.
+  customer_safe_messages: >-
+    Endpoints whose business outcome can fail carry separate, jargon-free,
+    auto-translated message attributes intended to be shown to the end customer.
+    This split -- log the English technical error, show the translated business
+    message -- is the provider's stated design.
+problems:
+  - status: 401
+    title: Missing authorization header
+    detail: Please configure an authorization header with your API key
+    envelope_fields: {success: false, error_title: Missing authorization header, error_message: 'Please configure an authorization header with your API key'}
+    method: probed
+    evidence:
+      url: https://api.autoura.com/api/whoami
+      http_status: 401
+      body: '{"success":false, "error_title": "Missing authorization header", "error_message": "Please configure an authorization header with your API key"}'
+      checked: '2026-09-13'
+    also_observed_on:
+      - https://api.autoura.com/api/stops/search
+      - https://api.autoura.com/api/visits/search
+      - https://api.autoura.com/api/characters/search
+  - status: 401
+    title: Authentication required
+    detail: MCP endpoint rejected an unauthenticated JSON-RPC call
+    surface: mcp
+    method: probed
+    evidence:
+      url: https://api.autoura.com/api/mcp
+      http_status: 401
+      body: '{"error":"Authentication required"}'
+      www_authenticate: 'Bearer resource_metadata="https://api.autoura.com/api/.well-known/oauth-protected-resource", scope="files:read"'
+      checked: '2026-09-13'
+    note: >-
+      A DIFFERENT envelope from the REST one -- a bare {"error": "..."} with no
+      success flag. The two surfaces on the same host do not share an error contract.
+  - status: 409
+    title: Account already exists
+    detail: >-
+      Returned by POST /api/identity/open/register when human_email already belongs
+      to an account. Documented remediation - fall back to /signin_code_send.
+    surface: identity
+    method: searched
+    source: https://www.planmyvisit.to/docs/ai/authentication.md
+  - status: 400
+    title: Profile not found
+    detail: >-
+      Returned by POST /api/identity/open/signin_code_send for an email with no
+      account. Documented remediation - call /register, then /verify.
+    surface: identity
+    method: searched
+    source: https://www.planmyvisit.to/docs/ai/authentication.md
+  - status: 400
+    title: Missing fields
+    detail: email and security code are both required on /verify.
+    surface: identity
+    method: searched
+  - status: 400
+    title: Request not found
+    detail: No active sign-in request. Documented remediation - call /signin_code_send again.
+    surface: identity
+    method: searched
+  - status: 400
+    title: Expired security code
+    detail: The code is older than 60 minutes. Documented remediation - call /signin_code_send again.
+    surface: identity
+    method: searched
+  - status: 400
+    title: Incorrect security code
+    detail: >-
+      Code mismatch, or too many failed attempts. Documented remediation - retry
+      carefully or request a new code.
+    surface: identity
+    method: searched
+findings:
+  - id: no-error-code-registry
+    severity: medium
+    detail: >-
+      Autoura publishes error TITLES but no stable machine-readable error codes. An
+      integrator matching on error_title is matching on English prose that the
+      provider is free to reword, and the provider itself says these strings are for
+      logs. There is nothing to switch on.
+  - id: two-envelopes-one-host
+    severity: low
+    detail: >-
+      REST returns {success, error_title, error_body}; MCP returns {error}. A client
+      that handles one does not handle the other.
+  - id: doc-vs-runtime-field-drift
+    severity: low
+    detail: The reference documents error_body; the live 401 returns error_message.

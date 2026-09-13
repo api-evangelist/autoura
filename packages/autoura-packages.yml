@@ -1,0 +1,47 @@
+generated: '2026-09-13'
+method: searched
+source: public package registries + https://github.com/Autoura
+sdk_count: 0
+official_sdk_count: 0
+note: >-
+  Autoura ships NO client libraries. This is a recorded negative, not an unchecked
+  gap: every registry below was queried on 2026-09-13 and answered. No Packages or
+  SDKs pointer is emitted from this file, because emitting one would assert a
+  distribution Autoura does not have.
+packages: []
+registries_probed:
+  - {registry: npm, query: 'autoura', endpoint: 'https://registry.npmjs.org/-/v1/search?text=autoura', result: 0 packages, version: null}
+  - {registry: npm, query: 'planmyvisit', result: 0 packages, version: null}
+  - {registry: pypi, name: autoura, endpoint: 'https://pypi.org/pypi/autoura/json', http_status: 404, version: null}
+  - {registry: pypi, name: planmyvisit, http_status: 404, version: null}
+  - {registry: rubygems, name: autoura, http_status: 404, version: null}
+  - {registry: crates.io, name: autoura, http_status: 404, version: null}
+  - {registry: packagist, name: autoura, http_status: 301, result: no package, version: null}
+github_org:
+  url: https://github.com/Autoura
+  public_repos: 3
+  repos:
+    - {name: SahraInterview, language: Kotlin, last_pushed: '2023-06-09', official: true, is_sdk: false}
+    - {name: TBDdemo, language: Vue, last_pushed: '2024-11-04', official: true, is_sdk: false}
+    - {name: DIFHackathon2024, language: JavaScript, last_pushed: '2024-11-04', official: true, is_sdk: false}
+  note: >-
+    Three public repositories, none of them a client library. All three last saw a
+    push in 2023-2024, against an API whose changelog was still landing changes in
+    July 2026 -- the public repos are demos and hackathon code, not a maintained
+    distribution.
+cdn_distributed:
+  - name: autoura-stop-book (booking widget)
+    registry: cdn
+    url: https://api.autoura.com/widgets/autoura-stop-book/js/book.js
+    version: null
+    published: null
+    note: >-
+      Served unpinned from the provider's own host -- no version in the URL, no CDN
+      metadata API, no integrity hash. It floats to whatever is current, so a consumer
+      cannot tell what they are getting either. That is the finding, not a gap in our
+      lookup.
+    artifact: components/autoura-components.yml
+integration_posture: >-
+  Autoura expects direct HTTP -- its published examples are bare URLs with an
+  Authorization header, and its one code sample is an Axios header assignment. For
+  agents the distribution channel is the MCP endpoint, not a package.

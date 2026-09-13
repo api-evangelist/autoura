@@ -1,7 +1,16 @@
-generated: '2026-09-11'
-method: probed
-source: https://api.autoura.com/api/mcp
-status: gated
+generated: '2026-09-13'
+method: searched
+source: https://www.planmyvisit.to/docs/ai/tools.md
+status: published
+supersedes:
+  generated: '2026-09-11'
+  method: probed
+  note: >-
+    The previous manifest recorded a reachable-but-gated endpoint with no tools and
+    warned against deriving a tool list from an OpenAPI. That warning still stands
+    and is still honoured -- Autoura publishes no OpenAPI, and nothing here was
+    derived from one. The tools below are the PROVIDER'S OWN published names and
+    descriptions, harvested from Autoura's consumer agent documentation.
 server:
   name: autoura
   transport: http
@@ -9,13 +18,141 @@ server:
 deployment:
   mode: remote
   endpoint: https://api.autoura.com/api/mcp
+  install: null
+  package: null
+  auth: oauth
   verified: probed
-  probe: gated
-  checked: '2026-09-11'
-  source: docs-check 2026-09-12 (endpoint found in the provider's own documentation, then probed)
-  probe_why: RFC 9728 challenge on the MCP path only
-tools_note: No tool list captured. This manifest records a PROBED, reachable endpoint only; anonymous
-  tools/list was auth-gated or the server requires an initialize handshake this reachability probe does
-  not perform. Run signals/audit_mcp_authorship.py --probe to enumerate tools and settle platform-vs-provider
-  authorship. Do NOT derive a tool list from the OpenAPI and store it here -- that is a candidate manifest,
-  and it belongs under an X-MCPServerCandidate pointer.
+  checked: '2026-09-13'
+  probe:
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+    http_status: 401
+    body_returned: '{"error":"Authentication required"}'
+    www_authenticate: >-
+      Bearer resource_metadata="https://api.autoura.com/api/.well-known/oauth-protected-resource",
+      scope="files:read"
+    verdict: >-
+      Reachable and correctly gated. The 401 carries a conformant RFC 9728
+      WWW-Authenticate challenge pointing at a protected-resource document that
+      actually resolves -- this is the well-behaved shape, not a failure.
+authorization:
+  spec: RFC 9728 (OAuth 2.0 Protected Resource Metadata)
+  protected_resource: https://api.autoura.com/api/.well-known/oauth-protected-resource
+  authorization_server: https://api.autoura.com/api/auth
+  dynamic_client_registration: https://api.autoura.com/api/auth/oauth2/register
+  pkce: S256
+  scopes: [files:read, files:write, offline_access]
+  artifact: well-known/autoura-well-known.yml
+  alternate_flow:
+    name: email verification code
+    note: >-
+      Autoura documents a second, non-OAuth path to a bearer token for agents:
+      POST /api/identity/open/signin_code_send (or /register), then
+      POST /api/identity/open/verify with the six-digit code, returning an
+      access_token valid for 48 hours. See authentication/autoura-authentication.yml.
+surfaces:
+  b2b:
+    audience: brands, attractions, tour operators, destinations, designers, suppliers
+    guide: https://www.autoura.com/core/pai/skill.md
+    note: >-
+      Permission-controlled. The changelog entry for 27 July 2026 records "Added
+      visit plan search and get capabilities to the permission-controlled B2B MCP",
+      confirming the B2B and consumer tool sets differ on the same endpoint.
+  consumer:
+    audience: travellers planning and doing a single visit
+    guide: https://www.planmyvisit.to/skill.md
+    tool_reference: https://www.planmyvisit.to/docs/ai/tools.md
+  webmcp:
+    available: true
+    url: https://www.planmyvisit.to/webmcp
+    note: >-
+      The same tool set is also exposed as WebMCP on PlanMyVisit pages, driven by
+      the signed-in website session rather than an agent-held token. The provider
+      states Codex in the ChatGPT desktop app is supported and tested; Chrome and
+      Edge can expose the tools for developers but their assistants do not yet
+      consume them.
+    docs: https://www.planmyvisit.to/about/instructions/protocols#webmcp
+tools_note: >-
+  Autoura instructs agents, twice and in bold, NOT to hard-code tool names and to
+  call tools/list at the start of every session because "tool availability and
+  structure may vary between accounts and over time". The list below is therefore
+  the provider's own SELECTED reference, not a complete catalogue, and carries no
+  inputSchema: live schemas require an authenticated tools/list. Nothing here was
+  invented and nothing was derived from a REST spec.
+tools_source: provider documentation (names + descriptions only; schemas auth-gated)
+tools:
+  - name: visit_venues_search
+    category: venue-knowledge
+    description: Search real-world visitor venues near a latitude/longitude; returns candidate venues with visit_id, name, location, summary and distance.
+  - name: visit_knowledge_get
+    category: venue-knowledge
+    description: Return structured curated knowledge for one venue by visit_id -- highlights, suggested moments, guide recommendations, accessibility notes, practical tips, typical duration.
+  - name: characters_search
+    category: venue-knowledge
+    description: List available AI-powered guides (characters) that can lead a visit; each entry has character_id, name, summary and photo.
+  - name: preferences_get
+    category: preferences
+    description: Return the authenticated human's self-attested Autoura preferences -- dietary needs, allergies, accessibility and mobility, budget, pace, food, group context.
+  - name: preferences_update
+    category: preferences
+    description: Partially update the authenticated human's preferences. Added to the consumer MCP on 13 July 2026.
+  - name: personal_data_export_request
+    category: preferences
+    description: Request an export of the human's personal data. Explicitly not routine; requires an explicit request and confirmation to email it.
+  - name: visitplan_new
+    category: visit-plan
+    description: Create a new visit plan for a venue and date, only after checking that no accessible plan already exists for that visit.
+  - name: visitplan_get
+    category: visit-plan
+    description: Retrieve one visit plan by id, including state, calculated moments and shared completion.
+  - name: visitplans_search
+    category: visit-plan
+    description: Find existing accessible visit plans when the plan id is not known.
+  - name: visitplan_update
+    category: visit-plan
+    description: Update supported structural fields on a plan -- dates, group context, guide -- and activate it with state:active.
+  - name: visitplan_member_outcomes_update
+    category: visit-plan
+    description: Record visit-specific priorities for a member of the plan (as distinct from lasting preferences).
+  - name: visitplan_moment_update
+    category: visit-plan
+    description: Mark a moment done or not done while the plan and attendee are active. Completion is shared across services.
+  - name: visitplan_note_new
+    category: visit-plan
+    description: Add shared conversational input to a plan as a note.
+  - name: visitplan_delete
+    category: visit-plan
+    description: Delete a visit plan. Permanent, allowed only in supported states, requires explicit human consent.
+  - name: location_get
+    category: location
+    description: Read location for the authenticated human. Added to the consumer MCP on 27 July 2026.
+  - name: location_update
+    category: location
+    description: Update location for the authenticated human. Added to the consumer MCP on 27 July 2026.
+  - name: content_gap_report
+    category: feedback
+    description: Report missing, incorrect, outdated or unclear venue information rather than fabricating a venue fact.
+  - name: product_gap_report
+    category: feedback
+    description: Report a capability gap before offering a workaround.
+  - name: brand_overview
+    category: b2b
+    description: >-
+      Return what Autoura currently knows about a brand -- objectives, brand memory,
+      users, account state. The only tool named in the B2B skill; Autoura instructs
+      agents to call it before doing meaningful work for a brand.
+  - name: planmyvisit_sign_in_or_sign_up
+    category: webmcp
+    description: WebMCP-only. Opens the sign-in/sign-up setup page in the same browser profile that runs the page's WebMCP tools.
+  - name: stop_get
+    category: b2b
+    description: >-
+      Named in the 30 July 2026 changelog entry ("Stop Get API and stop_get MCP now
+      include the Stop's direct Fact count under facts"), confirming a stop_get tool
+      on the MCP surface alongside the REST Stop Get.
+coverage:
+  tools_named: 21
+  tools_with_input_schema: 0
+  input_schema_blocker: >-
+    Anonymous tools/list returns 401. Enumerating real inputSchemas requires an
+    authenticated introspection run with an Autoura account.

@@ -3,143 +3,112 @@ specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
 provider: Autoura
 providerId: autoura
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/pricing
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
-tags:
-  - Tourism
-  - Tours
-  - Travel
-  - Destinations
-  - Experiences
-  - Digital Tourism
-description: Machine-readable plans and pricing scaffold for this API provider. Conforms to the API Commons
-  Plans schema. Tier limits and prices are scaffold defaults; replace with provider-published values.
+modified: '2026-09-13'
+supersedes:
+  method: generated
+  modified: '2026-05-04'
+  note: >-
+    The previous file was a bulk-sweep scaffold with invented Free/Professional/
+    Enterprise tiers and placeholder quotas. It has been replaced wholesale with the
+    three tiers Autoura actually publishes, at the prices it actually charges.
+tags: [Tourism, Tours, Travel, Destinations, Experiences, Digital Tourism, Pricing]
+description: >-
+  Autoura's published plans. Note what these tiers are priced on -- they are a
+  platform subscription metered in CONTENT OBJECTS (characters, visits, routes,
+  MoveMe audio generations) and new consumer profiles, not in API calls. API access
+  is a line item included on every tier rather than a thing you buy volume of.
+plan_count: 3
+currency: USD
+currencies_offered: [USD]
+billing_periods: [monthly, annual]
+annual_discount: '2 months free (annual is priced at 10x the monthly rate)'
+merchant_of_record: Creem.io
+tax_note: >-
+  "We generally use Creem.io as our payment provider and Merchant of Record. Sales
+  tax may be added (by them) depending upon where you are in the world."
+self_serve: true
+enterprise_contact_only: false
 plans:
-  - id: autoura-free
-    name: Free
-    type: freemium
-    description: Free entry tier for the Autoura API surface. Intended for evaluation, prototyping, and
-      low-volume integrations. Real limits and pricing must be reconciled with the provider's published
-      plan documentation.
-    entries:
-      - label: API Requests
-        description: Monthly API request quota across all included endpoints
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: 1000
-        timeFrame: month
-        geo: global
-        domains: []
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the free tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 10
-        timeFrame: minute
-        geo: global
-        domains: []
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-    elements:
-      - name: Public Documentation
-      - name: Community Support
-      - name: Sandbox Access
-      - name: Autoura Experience API
-  - id: autoura-pro
-    name: Professional
+  - id: autoura-starter
+    name: Starter
     type: paid
-    description: Production tier for Autoura. Provides higher quotas, priority support, and access to
-      the broader API portfolio. Pricing placeholder; align with the provider's pricing page.
+    tagline: Learn how it works without fully committing
+    positioning: '"Our starter plan is your chance to explore AI tour operating"'
+    price_monthly: '30 USD / month'
+    price_annual: '300 USD / year'
+    billing_note: Billed monthly, or billed annually
     entries:
-      - label: API Requests
-        description: Monthly API request quota
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: 100000
-        timeFrame: month
-        geo: global
-        domains: []
-        unit: 1
-        price: TBD
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the professional tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 100
-        timeFrame: minute
-        geo: global
-        domains: []
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Overage
-        description: Per-request price after monthly quota is exceeded
-        name: overage
-        type: metered
-        metric: requests
-        limit: -1
-        timeFrame: month
-        geo: global
-        domains: []
-        unit: 1000
-        price: TBD
-        userMultiplied: false
+      - {label: Characters, name: characters, type: quota, metric: characters, limit: 3, timeFrame: account, note: 'custom AI tour guide characters, in addition to the 25+ standard cast'}
+      - {label: New profiles, name: new_profiles, type: quota, metric: profiles, limit: 150, timeFrame: month, note: 'consumer usage cap; raise it by supplying your own OpenAI and ElevenLabs API keys'}
+      - {label: PlanMyVisit visits, name: visits, type: quota, metric: visits, limit: 2, timeFrame: account}
+      - {label: MoveMe audio, name: moveme_generations, type: quota, metric: generations, limit: 10, timeFrame: month}
+      - {label: Routes, name: routes, type: quota, metric: routes, limit: 0, timeFrame: account, note: 'sequential audio tours are not included on Starter'}
     elements:
-      - name: All Production Endpoints
-      - name: Email Support
-      - name: SLA Targets
-      - name: Webhook Subscriptions
-      - name: Autoura Experience API
+      - {name: Core Autoura platform}
+      - {name: API access}
+      - {name: Autoura Experience API}
+  - id: autoura-scale
+    name: Scale
+    type: paid
+    tagline: Now you can call yourself a smart tour operator!
+    price_monthly: '125 USD / month'
+    price_annual: '1250 USD / year'
+    billing_note: Billed monthly, or billed annually
+    entries:
+      - {label: Characters, name: characters, type: quota, metric: characters, limit: 8, timeFrame: account, note: 'go higher with your own ElevenLabs API key'}
+      - {label: New profiles, name: new_profiles, type: quota, metric: profiles, limit: 150, timeFrame: month, note: 'go higher with your own OpenAI and ElevenLabs API keys'}
+      - {label: PlanMyVisit visits, name: visits, type: quota, metric: visits, limit: 10, timeFrame: account}
+      - {label: Routes, name: routes, type: quota, metric: routes, limit: 10, timeFrame: account}
+      - {label: MoveMe audio, name: moveme_generations, type: quota, metric: generations, limit: 50, timeFrame: month, note: 'go higher with your own OpenAI and ElevenLabs API keys'}
+    elements:
+      - {name: Core Autoura platform}
+      - {name: API access}
+      - {name: Own branding shown to customers}
+      - {name: AI Avatar integration (via Anam)}
+      - {name: Sequential audio tours}
+      - {name: Autoura Experience API}
   - id: autoura-enterprise
     name: Enterprise
-    type: enterprise
-    description: Custom-negotiated tier for Autoura. Includes dedicated capacity, contractual SLAs, security
-      review, data residency options, and named technical account management.
+    type: paid
+    tagline: 'Already a large tour operator? Transition to AI with Autoura'
+    price_monthly: '250 USD / month'
+    price_annual: '2500 USD / year'
+    billing_note: Billed quarterly on the monthly rate, or billed annually
     entries:
-      - label: API Requests
-        description: Negotiated request volume; -1 indicates uncapped subject to fair use
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: -1
-        timeFrame: month
-        geo: configurable
-        domains: []
-        unit: 1
-        price: custom
-        userMultiplied: false
-      - label: Rate Limit
-        description: Negotiated burst and steady-state rate
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 1000
-        timeFrame: minute
-        geo: configurable
-        domains: []
-        unit: 1
-        price: custom
-        userMultiplied: false
+      - {label: Characters, name: characters, type: quota, metric: characters, limit: -1, timeFrame: account, note: 'go higher with your own ElevenLabs API key'}
+      - {label: New profiles, name: new_profiles, type: quota, metric: profiles, limit: 150, timeFrame: month, note: 'go higher with your own OpenAI and ElevenLabs API keys'}
+      - {label: PlanMyVisit visits, name: visits, type: quota, metric: visits, limit: 25, timeFrame: account}
+      - {label: Routes, name: routes, type: quota, metric: routes, limit: 50, timeFrame: account}
+      - {label: MoveMe audio, name: moveme_generations, type: quota, metric: generations, limit: 100, timeFrame: month, note: 'go higher with your own OpenAI and ElevenLabs API keys'}
     elements:
-      - name: Unlimited / Negotiated Volume
-      - name: 24/7 Dedicated Support
-      - name: Contractual SLA
-      - name: Security & Compliance Review
-      - name: Dedicated Account Manager
-      - name: Custom Data Residency
-      - name: Autoura Experience API
+      - {name: Core Autoura platform}
+      - {name: API access}
+      - {name: Own branding shown to customers}
+      - {name: Whitelabel Autoura Connect app}
+      - {name: AI Avatar integration (via Anam)}
+      - {name: Sequential audio tours}
+      - {name: Branded MoveMe audio}
+      - {name: Autoura Experience API}
+other_pricing:
+  - {item: Route, price: '300 USD', alt_price: '300 GBP', note: 'a one-off route price published alongside the plans'}
+roadmap_items:
+  - {item: Personalised audio, status: 'Coming soon', tiers: [Starter, Scale, Enterprise], note: 'e.g. include booking details and preferences in generated audio'}
+notes:
+  - >-
+    Autoura's stated reason for the profile cap is worth recording verbatim: "We
+    don't want to introduce metered usage but we must have some kind of limit". The
+    escape hatch on almost every ceiling is to bring your own OpenAI / ElevenLabs key,
+    which moves the marginal AI cost onto the customer rather than charging for it.
+  - >-
+    Cancellation is self-serve through Creem.io sign-in, or by emailing
+    brands@autoura.com. Changing account level must be handled by Autoura.
+    Upgrading must be done by a brand owner (a human) with a credit card; the
+    published agent skill states an agent cannot do it.
+  - 'Failure to pay results in account restriction.'
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

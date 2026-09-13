@@ -1,0 +1,103 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/core/pai/skill.md
+note: >-
+  Autoura PUBLISHES its own agent skills. The homepage advertises them with a
+  <link rel="ai-skill" href="/core/pai/skill.md" type="text/markdown"> element in
+  the document head, and the skill document indexes a further thirteen markdown
+  reference documents under /core/pai/docs/. Nothing in this directory was
+  authored by API Evangelist -- every file is the provider's own document saved
+  verbatim. The PlanMyVisit files are Autoura's consumer-facing agent guide for
+  the SAME MCP endpoint (https://api.autoura.com/api/mcp); Autoura's own skill.md
+  names PlanMyVisit as its product and links to that guide.
+discovery:
+  mechanism: link rel="ai-skill"
+  html_head: '<link rel=ai-skill href=/core/pai/skill.md type=text/markdown>'
+  observed_on: https://www.autoura.com/
+  fetched: '2026-09-13'
+skills:
+  - file: autoura-agent-skill.md
+    name: Autoura — AI Agent Integration
+    description: >-
+      The B2B operating guide for an agent working inside Autoura: what Autoura
+      is, when to hand off to PlanMyVisit, how to authenticate, the three-tier
+      guidance model (getting started / strategy / execution), the PAI (Personal
+      AI) identity model, tasks as the operational unit, entity definitions with
+      their ID prefixes, and the contact routes to a human.
+    api: mcp/autoura-mcp.yml
+    source: https://www.autoura.com/core/pai/skill.md
+    method: searched
+    http_status: 200
+    content_type: text/markdown
+    bytes: 9850
+    operations: []
+    operations_note: >-
+      The skill deliberately names no fixed tool list. Autoura instructs agents to
+      "discover available MCP tools dynamically at runtime rather than assuming
+      tool names or schemas". brand_overview is the single tool it names by name.
+  - file: autoura-planmyvisit-agent-skill.md
+    name: PlanMyVisit — agent operating guide
+    description: >-
+      Autoura's consumer-side agent guide: authenticate over the email-code flow
+      or WebMCP, discover tools, find or resume the one shared visit plan, load
+      preferences, resolve the venue, then create/refine/resume. Carries the
+      before-visit and during-visit workflows and the consent rules.
+    api: mcp/autoura-mcp.yml
+    source: https://www.planmyvisit.to/skill.md
+    method: searched
+    http_status: 200
+    bytes: 9854
+    operations:
+      - visitplan_get
+      - visitplans_search
+      - visitplan_new
+      - visitplan_update
+      - preferences_get
+      - visit_venues_search
+      - visit_knowledge_get
+  - file: autoura-planmyvisit-tool-reference.md
+    name: PlanMyVisit selected tool reference
+    description: >-
+      The provider's own prose description of the MCP tool surface, grouped into
+      venue/knowledge, preference, companion, visit-plan and feedback tools. The
+      provider states explicitly that it is "a selected capability reference, not
+      a complete catalogue or a fixed schema".
+    api: mcp/autoura-mcp.yml
+    source: https://www.planmyvisit.to/docs/ai/tools.md
+    method: searched
+    http_status: 200
+    bytes: 11776
+  - file: autoura-planmyvisit-authentication.md
+    name: PlanMyVisit authentication reference
+    description: >-
+      The identity model (human owner + optional PAI), the three POST identity
+      endpoints, the 48-hour access-token lifecycle, the WebMCP session model and
+      the three email-access scenarios an agent may find itself in.
+    api: authentication/autoura-authentication.yml
+    source: https://www.planmyvisit.to/docs/ai/authentication.md
+    method: searched
+    http_status: 200
+    bytes: 8385
+supporting_documents:
+  directory: skills/autoura-pai-docs/
+  source_base: https://www.autoura.com/core/pai/docs/
+  note: >-
+    The thirteen reference documents the skill indexes, saved verbatim. Autoura
+    splits them into Core reference, Getting started, Strategy (guidance only --
+    "do not execute directly from these") and Execution (procedural), plus
+    Operations. This three-way split is unusual and is itself the finding: the
+    provider tells the agent which documents are safe to act on.
+  files:
+    - {file: authentication.md, tier: core-reference}
+    - {file: getting_started.md, tier: getting-started}
+    - {file: visit_strategy.md, tier: strategy}
+    - {file: autoura_strategy.md, tier: strategy}
+    - {file: visit_config.md, tier: execution}
+    - {file: route_config.md, tier: execution}
+    - {file: stop_config.md, tier: execution}
+    - {file: facts.md, tier: execution}
+    - {file: content_gap_summary_array.md, tier: execution}
+    - {file: character_config.md, tier: execution}
+    - {file: offer_config.md, tier: execution}
+    - {file: script_config.md, tier: execution}
+    - {file: tasks.md, tier: operations}

@@ -1,0 +1,62 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/docs/api/integrations/signin
+spec_type: none
+asyncapi_published: false
+note: >-
+  Autoura publishes NO AsyncAPI document and no general event stream. It does publish
+  exactly one webhook: an optional delivery mode inside the consumer preference-sharing
+  flow. That is a real, documented callback surface, so it is captured here as a
+  webhook catalogue rather than fabricated into an AsyncAPI. Probed
+  /asyncapi.yaml on both hosts (404 / SPA shell) before recording this.
+webhooks:
+  - name: preference-share-delivery
+    trigger: >-
+      A consumer scans an Autoura identity-invite QR code in the Autoura Connect app
+      and grants permission to share their preferences with the integrating brand.
+    delivery: HTTP POST to a subscriber-configured URL
+    configuration: >-
+      Configured on the identity invite in the Autoura platform, not through the API.
+      Autoura offers polling and webhook as alternative delivery styles for the same
+      event and states both may be used together.
+    when_required: >-
+      "If you are printing/displaying a static QR code (i.e. polling is turned off on
+      the identity invite configuration), only the webhook integration style is
+      appropriate."
+    payload_fields:
+      - identity_invite_id
+      - state
+      - scope
+      - scope_location
+      - scope_companions
+      - preferences
+      - profile_jwt
+      - profile_sections
+      - metadata
+      - location
+      - companions/discovery
+      - companions/preferences
+    payload_note: >-
+      The same payload the polling endpoint returns. state becomes
+      share_permission_given when consent is granted; metadata (up to 500 characters)
+      is echoed back from the invite for the subscriber's own cross-referencing.
+    docs: https://www.autoura.com/docs/api/integrations/signin
+    polling_alternative:
+      endpoint: https://api.autoura.com/api/identity/share/poll
+      interval: 'Autoura polls every 750ms in its own integrations'
+      timeout: 'the QR code is withdrawn after 180 seconds if the consumer does not act'
+gaps:
+  - id: no-signature-documented
+    severity: medium
+    detail: >-
+      No webhook signing secret, HMAC header or verification procedure is documented.
+      A subscriber cannot verify that a POST carrying consumer preference data came
+      from Autoura.
+  - id: no-retry-policy
+    severity: low
+    detail: No retry, backoff or dead-letter behaviour is published for the webhook.
+  - id: no-event-catalogue
+    severity: low
+    detail: >-
+      One event exists. Nothing is published for booking, availability, content or
+      visit-plan changes, so an integrator must poll for everything else.

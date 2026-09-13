@@ -1,0 +1,139 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/core/pai/skill.md
+docs:
+  - https://www.autoura.com/core/pai/skill.md
+  - https://www.autoura.com/docs/api/concepts
+note: >-
+  Autoura publishes no OpenAPI, so this graph was NOT derived from $ref links. It is
+  the provider's own entity definitions, taken verbatim from the "Entity definitions"
+  section of its published agent skill, which also states the ID-prefix convention.
+  Relationships are read from the definitions and from the API reference's own
+  descriptions of how routes, stops and visits compose.
+id_convention:
+  pattern: '{type}-'
+  case: lowercase
+  provider_statement: >-
+    "entity ID prefixes use lowercase {type}- values, for example route-, visit-,
+    stop-, and moveme-. user is the main exception and does not use a type prefix."
+  examples:
+    - profile-xxxxxxx
+    - ii-XXXXXXXX
+    - brand-dfba3c89b4522a0
+entities:
+  - name: route
+    id_prefix: route-
+    description: A fixed, ordered sequence of stops within a single day, guiding movement between places.
+    relationships:
+      - {type: has_many, target: stop, via: itinerary}
+      - {type: has_one, target: character, via: guide}
+      - {type: belongs_to, target: brand}
+      - {type: belongs_to, target: designer}
+  - name: visit
+    id_prefix: visit-
+    description: A structured configuration for experiencing a single place -- museum, attraction, venue -- describing how time could be spent there.
+    relationships:
+      - {type: has_many, target: stop, via: nearby stops selected by curators}
+      - {type: has_many, target: fact, via: facts}
+      - {type: has_many, target: visit_plan}
+      - {type: belongs_to, target: brand, via: curator}
+  - name: visit_plan
+    id_prefix: visitplan-
+    id_prefix_confidence: low
+    description: A personalised, time-specific plan for experiencing a place, created for a profile or group from their preferences and context.
+    surface: MCP only
+    relationships:
+      - {type: belongs_to, target: visit}
+      - {type: has_one, target: character, via: guide}
+      - {type: has_many, target: profile, via: members}
+      - {type: has_many, target: moment}
+      - {type: has_many, target: note}
+  - name: stop
+    id_prefix: stop-
+    description: >-
+      An individual real-world experience point -- point of interest, food and drink
+      venue, attraction, shop, tour, activity, ticketed event or accommodation --
+      within a visit or route.
+    categories: [Points of interest, Food & Drink, Attractions & Shops, Tours & Activities, Tickets & Events, Accommodation]
+    relationships:
+      - {type: belongs_to, target: supplier}
+      - {type: has_many, target: offer}
+      - {type: has_many, target: taste, via: food.tastes}
+  - name: profile
+    id_prefix: profile-
+    description: A consumer account / guest identity. Addressed by DID; carries the preference graph.
+    relationships:
+      - {type: has_many, target: profile, via: companions}
+      - {type: has_one, target: preferences}
+  - name: user
+    id_prefix: none
+    description: A B2B user account -- internal Autoura employee, or external brand, affiliate, supplier or designer.
+    note: The one entity that does not carry a type prefix.
+  - name: pai
+    id_prefix: none
+    description: >-
+      A Personal AI -- an AI agent associated with an account. In Autoura B2B the PAI
+      is its OWN user, separate from the human, not a profile field or sub-identity.
+  - name: affiliate
+    description: The distribution side of the ecosystem.
+  - name: supplier
+    description: The supply side of the ecosystem.
+  - name: brand
+    id_prefix: brand-
+    description: The main business entity using Autoura.
+    relationships:
+      - {type: has_many, target: user}
+      - {type: has_many, target: visit}
+      - {type: has_many, target: route}
+      - {type: has_one, target: brand_memory}
+      - {type: has_many, target: objective}
+  - name: designer
+    description: Freelance designers for routes, stops and visits.
+  - name: moveme
+    id_prefix: moveme-
+    description: A 10-20 minute AI-generated audio experience.
+  - name: character
+    id_prefix: character-
+    description: A consumer-facing AI character or persona that guides a visit or route.
+    relationships:
+      - {type: has_many, target: script}
+  - name: script
+    description: Storytelling content performed by a character.
+    kinds: [story, workshop, questions, conversation starter, message, moveme, video]
+  - name: offer
+    description: A venue or stop-related offer, such as a discount.
+    relationships:
+      - {type: belongs_to, target: stop}
+  - name: task
+    description: A unit of tracked work for project management, support, and live customer orchestration.
+    states_observed: [awaiting_orchestration]
+    note: Autoura's stated main operational tool; agents are told to search before creating and to avoid duplicates.
+  - name: fact
+    description: >-
+      A source-backed provenance unit attached to a visit or stop. Visit Get exposes a
+      direct fact count plus stops_facts_count, and a freshness-checked timestamp.
+    docs: https://www.autoura.com/core/pai/docs/facts.md
+  - name: content_gap
+    description: >-
+      A recorded hole in curated venue knowledge, with resolved/unresolved status.
+      Agents file them with content_gap_report instead of fabricating a fact.
+    docs: https://www.autoura.com/core/pai/docs/content_gap_summary_array.md
+  - name: identity_invite
+    id_prefix: ii-
+    description: A consent-brokering object that produces a QR code a consumer scans to share preferences with a brand.
+vocabularies:
+  - name: specific_meals
+    standard: IATA airline special-meal codes
+    values: [DBML, GFML, VGML, MOML, HNML, JVML, KSML, HFML, LCML, LSML, LPML, PRML, LFML, NLML, BLML]
+  - name: group_context
+    values: [solo, couple, friends, kids, teenagers, group]
+  - name: class_preference
+    values: [budget, standard, premium]
+  - name: cuisine_*
+    scale: [no, yes, love]
+    note: ~25 cuisine axes, each a three-level preference rather than a boolean.
+  - name: scope_location
+    values: [no, approximate, accurate]
+  - name: scope_companions
+    values: [no, match, discovery_aggregate]
+render: null

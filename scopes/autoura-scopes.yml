@@ -1,0 +1,69 @@
+generated: '2026-09-13'
+method: probed
+source: https://api.autoura.com/api/auth/.well-known/openid-configuration
+docs: https://api.autoura.com/api/.well-known/oauth-protected-resource
+note: >-
+  Derived from the provider's live discovery documents, not from an OpenAPI --
+  Autoura publishes none. The three documents disagree slightly and that disagreement
+  is recorded rather than smoothed over: the RFC 8414 authorization-server document
+  advertises two scopes, the OIDC document and the RFC 9728 protected-resource
+  document both advertise three. Autoura publishes no prose scope reference page, so
+  the descriptions below are the scope names' plain meaning and are marked as such.
+schemes:
+  - name: mcpOAuth2
+    source: well-known/autoura-oauth-authorization-server.json
+    issuer: https://api.autoura.com/api/auth
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://api.autoura.com/api/auth/oauth2/authorize
+        tokenUrl: https://api.autoura.com/api/auth/oauth2/token
+        pkce: S256
+scopes:
+  - scope: files:read
+    description: Read access to the MCP resource. No provider prose definition is published.
+    description_source: scope name only -- Autoura publishes no scopes reference page
+    flows: [authorizationCode]
+    sources:
+      - well-known/autoura-oauth-authorization-server.json
+      - well-known/autoura-openid-configuration.json
+      - well-known/autoura-oauth-protected-resource.json
+    advertised_in_challenge: true
+    note: >-
+      This is the scope named in the WWW-Authenticate challenge returned by an
+      unauthenticated POST to https://api.autoura.com/api/mcp.
+  - scope: files:write
+    description: Write access to the MCP resource. No provider prose definition is published.
+    description_source: scope name only
+    flows: [authorizationCode]
+    sources:
+      - well-known/autoura-oauth-authorization-server.json
+      - well-known/autoura-openid-configuration.json
+      - well-known/autoura-oauth-protected-resource.json
+  - scope: offline_access
+    description: Refresh-token issuance, paired with the refresh_token grant type.
+    description_source: OIDC core semantics
+    flows: [authorizationCode]
+    sources:
+      - well-known/autoura-openid-configuration.json
+      - well-known/autoura-oauth-protected-resource.json
+    absent_from:
+      - well-known/autoura-oauth-authorization-server.json
+    note: >-
+      Present in the OIDC and protected-resource documents but NOT in the RFC 8414
+      authorization-server document, which also omits refresh_token from
+      grant_types_supported. A client that reads only the RFC 8414 document will not
+      know refresh tokens are available.
+findings:
+  - id: scope-vocabulary-mismatch
+    severity: low
+    detail: >-
+      The scope names are files:read / files:write, which describe a file resource.
+      Nothing the MCP server actually exposes -- visit plans, preferences, venue
+      knowledge, locations -- is a file. The names look like a framework default that
+      was never renamed for the domain, and they give an agent no way to request
+      least privilege over the surface it is really touching.
+  - id: discovery-document-drift
+    severity: low
+    detail: >-
+      Three discovery documents are served from three path roots and two of them
+      disagree on scopes_supported and grant_types_supported.

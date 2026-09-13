@@ -1,0 +1,146 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/docs/api/authentication
+docs:
+  - https://www.autoura.com/docs/api/authentication
+  - https://www.autoura.com/core/pai/docs/authentication.md
+  - https://www.planmyvisit.to/docs/ai/authentication.md
+note: >-
+  Autoura publishes no OpenAPI, so nothing here is derived from securitySchemes.
+  Every scheme below was read from the provider's own authentication pages and,
+  where possible, confirmed against a live probe. Autoura runs THREE distinct
+  authentication models on one API host, for three distinct audiences, and the
+  docs say so explicitly ("Authentication is handled differently for the MCP
+  endpoint").
+summary:
+  types: [apiKey, http, oauth2, openIdConnect]
+  api_key_in: [header]
+  oauth2_flows: [authorizationCode]
+  distinct_models: 3
+schemes:
+  - name: bearerApiKey
+    type: http
+    scheme: bearer
+    applies_to: the REST API (https://api.autoura.com/api)
+    audience: brands, designers, suppliers, affiliates
+    description: >-
+      A static API key sent as "Authorization: Bearer <API_KEY>". Keys are issued in
+      the Autoura Dashboard, on the first page after sign-in under "Your account".
+      Autoura states that not all keys are equal -- "Brands are the most powerful
+      (for retail), designers for example can't access preferences & personalisation
+      tools" -- so the key itself carries the authorisation tier.
+    key_posture:
+      client_side_use: permitted
+      provider_statement: >-
+        "The API key is expected to be used within mobile apps and other client side
+        code (e.g. JavaScript). There is no method to access customer details or
+        other GDPR related information with these API keys."
+      sharing: >-
+        Each service must use its own key; Autoura asks that keys are not committed
+        to public repositories or shared between organisations.
+    verification_endpoint: https://api.autoura.com/api/whoami
+    verification_note: >-
+      Autoura publishes WhoAmI specifically as the auth test because it is the one
+      endpoint not served from the Fastly cache -- a cached endpoint can appear to
+      work when the credential is wrong.
+    probe:
+      url: https://api.autoura.com/api/whoami
+      unauthenticated_status: 401
+      unauthenticated_body: '{"success":false, "error_title": "Missing authorization header", "error_message": "Please configure an authorization header with your API key"}'
+      checked: '2026-09-13'
+    source: https://www.autoura.com/docs/api/authentication
+  - name: mcpOAuth2
+    type: oauth2
+    applies_to: the MCP endpoint (https://api.autoura.com/api/mcp)
+    audience: AI agents
+    description: >-
+      OAuth 2.1-shaped authorization-code flow with PKCE and dynamic client
+      registration, advertised through a conformant RFC 9728 protected-resource
+      document and an RFC 8414 authorization-server document.
+    flows:
+      - flow: authorizationCode
+        authorizationUrl: https://api.autoura.com/api/auth/oauth2/authorize
+        tokenUrl: https://api.autoura.com/api/auth/oauth2/token
+        registrationUrl: https://api.autoura.com/api/auth/oauth2/register
+        jwksUri: https://api.autoura.com/api/auth/oauth2/jwks
+        pkce: S256
+        scopes:
+          files:read: read scope advertised for the MCP resource
+          files:write: write scope advertised for the MCP resource
+          offline_access: refresh-token scope (OIDC document only)
+    issuer: https://api.autoura.com/api/auth
+    protected_resource: https://api.autoura.com/api/mcp
+    discovery:
+      - well-known/autoura-oauth-protected-resource.json
+      - well-known/autoura-oauth-authorization-server.json
+      - well-known/autoura-openid-configuration.json
+    probe:
+      url: https://api.autoura.com/api/mcp
+      method: POST
+      unauthenticated_status: 401
+      www_authenticate: 'Bearer resource_metadata="https://api.autoura.com/api/.well-known/oauth-protected-resource", scope="files:read"'
+      checked: '2026-09-13'
+    source: https://api.autoura.com/api/.well-known/oauth-protected-resource
+  - name: openIdConnect
+    type: openIdConnect
+    openIdConnectUrl: https://api.autoura.com/api/auth/.well-known/openid-configuration
+    applies_to: the same authorization server as mcpOAuth2
+    description: >-
+      An OIDC discovery document is served alongside the OAuth one. It is the richer
+      of the two: it adds refresh_token to grant_types_supported, offline_access to
+      scopes_supported, subject_types_supported [public] and
+      id_token_signing_alg_values_supported [RS256].
+    source: well-known/autoura-openid-configuration.json
+  - name: emailCodeBearer
+    type: http
+    scheme: bearer
+    applies_to: the MCP endpoint, for agents onboarding a human account
+    audience: consumer AI agents acting for a named human
+    description: >-
+      A second, non-OAuth route to an MCP bearer token, documented for agents.
+      Three open POST endpoints -- /api/identity/open/register,
+      /api/identity/open/signin_code_send and /api/identity/open/verify -- exchange a
+      six-digit email code for an access_token. The token always represents the
+      HUMAN account owner and carries a DID for that human, even when the agent
+      authenticated with its own pai_email.
+    token_lifetime: 48 hours
+    code_lifetime: 60 minutes
+    concurrency: >-
+      Issuing a new token does not invalidate previous ones; multiple unexpired
+      tokens can coexist.
+    identity_model:
+      human_email: required -- the account owner
+      pai_email: optional -- the Personal AI's own authentication email
+      note: >-
+        In Autoura B2B the PAI is its own user, "separate from the human user ...
+        not attached to the human as a profile field or sub-identity".
+    source: https://www.planmyvisit.to/docs/ai/authentication.md
+  - name: webMcpSession
+    type: session
+    applies_to: PlanMyVisit WebMCP pages
+    description: >-
+      Browser-session authentication for WebMCP. The website session resolves the
+      trusted profile; a browser-supplied profile ID is never trusted. The server
+      mints a short-lived internal MCP credential with a five-minute lifetime to
+      call the same tools, which limits replay without shortening the human's
+      website session. Agent self-registration is not available here.
+    source: https://www.planmyvisit.to/docs/ai/authentication.md
+  - name: didcomm
+    type: decentralized-identity
+    applies_to: the consumer preference and location services
+    description: >-
+      Autoura publishes DID Documents for consumer profiles and, since 22 October
+      2024, an AI agent definition inside them. A DIDCommMessaging service (version 2)
+      in a counterparty DID Document lets an external agent exchange DIDComm messages;
+      Autoura resolves through the DIF Universal Resolver only.
+    source: https://www.autoura.com/docs/api/profiles/didcomm
+consent_model:
+  note: >-
+    Consumer preference data is not reachable with an API key alone. Autoura brokers
+    it: POST /api/identity/share/invite returns an identity_invite_key rendered as a
+    QR code, the consumer scans it in the Autoura Connect app, and only after state
+    becomes share_permission_given does the polling endpoint return preferences.
+    Scope is negotiated per invite (scope, scope_location of no/approximate/accurate,
+    scope_companions of no/match/discovery_aggregate). A profile_jwt grants
+    subsequent access for 7 days and excludes companion data.
+  docs: https://www.autoura.com/docs/api/integrations/signin

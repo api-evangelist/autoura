@@ -1,0 +1,69 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/docs/api
+docs:
+  - https://www.autoura.com/docs/api
+  - https://www.autoura.com/docs/api/changelog
+versioning:
+  scheme: none
+  current: null
+  provider_statement: '"We don''t version APIs (currently). Changes are published on the changelog."'
+  docs: https://www.autoura.com/docs/api
+  note: >-
+    No version in the path, no version header, no dated version train. The API host
+    root is https://api.autoura.com/api with no version segment.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  note: >-
+    No deprecation policy, no notice period, no RFC 8594 Sunset or Deprecation header
+    support is documented anywhere. Removals are announced in the changelog on the
+    day they land and are worded in the past tense -- "Removed car as transport
+    mode", "Removed food-pass, use event-pass instead", "did removed from new profile
+    API", "Removed deeplink integration style as was not being used", "Removed the
+    exclusive promotion field from stops". Combined with the absence of versioning,
+    an integrator's only defence is to read the changelog.
+  observed_removals_recent:
+    - {date: '2026-07-06', change: 'Visit Get coming-up summary is no longer returned'}
+    - {date: '2025-12-22', change: 'nopref removed from specific meals; food_specific_meal renamed to specific_meals (array)'}
+    - {date: '2025-12-22', change: 'service.mobility moved to discovery.accessibility'}
+sla:
+  url: null
+  uptime_target: null
+  note: No public SLA or uptime commitment is published on the pricing or legal pages.
+status_page:
+  url: null
+  probed:
+    - {url: 'https://status.autoura.com', result: NXDOMAIN}
+  note: >-
+    No status page. status.autoura.com does not resolve, and no status link appears
+    in the site route table, the API reference or the agent skills.
+support:
+  channels:
+    - {kind: email, address: devhelp@autoura.com, purpose: API integration help, source: 'https://www.autoura.com/docs/api'}
+    - {kind: email, address: brands@autoura.com, purpose: attractions, tour operators, destinations, travel brands}
+    - {kind: email, address: designers@autoura.com, purpose: freelance designers}
+    - {kind: email, address: suppliers@autoura.com, purpose: ticketing, inventory supply, transactional integrations}
+    - {kind: email, address: hello@autoura.com, purpose: general enquiries}
+    - {kind: email, address: sahra@autoura.com, purpose: 'Autoura''s own AI assistant -- named as the best first contact for quick answers'}
+    - {kind: phone, value: '+44 (0)207 1182880'}
+  hours_note: '"Bear in mind that human responses usually follow European working hours."'
+  agent_channel:
+    mechanism: tasks
+    note: >-
+      Autoura's B2B skill names TASKS as the operational unit for support,
+      onboarding, coordination and orchestration, and instructs an agent to search
+      for an existing open task before creating one and to set status
+      awaiting_orchestration rather than closing a task the brand cannot finish.
+      That is a support channel designed for an agent rather than a human.
+    docs: https://www.autoura.com/core/pai/docs/tasks.md
+changelog:
+  url: https://www.autoura.com/docs/api/changelog
+  present: true
+  dated: true
+  earliest: '2022-10-15'
+  latest: '2026-07-30'
+  artifact: changelog/autoura-changelog.yml
+deprecated_operations: []

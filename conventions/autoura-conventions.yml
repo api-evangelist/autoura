@@ -1,0 +1,192 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/docs/api/concepts
+docs:
+  - https://www.autoura.com/docs/api/concepts
+  - https://www.autoura.com/docs/api/authentication
+  - https://www.autoura.com/docs/api/changelog
+note: >-
+  Read from Autoura's own "Important concepts" reference and its authentication and
+  changelog pages. No OpenAPI exists to derive from.
+authentication:
+  style: bearer-api-key (REST) / OAuth 2.1 + PKCE (MCP)
+  header: 'Authorization: Bearer <token>'
+  artifact: authentication/autoura-authentication.yml
+error_envelope:
+  style: success-flag
+  shape:
+    success: boolean -- must be checked on EVERY response before processing
+    error_title: short error label, English only
+    error_body: additional detail, English only
+    error_message: seen on the live 401; the docs name error_body
+  provider_statement: >-
+    "Every API request replies at the top level with a success attribute ... You
+    should check that success is true within each response before you continue
+    processing."
+  two_layer_semantics: >-
+    Autoura draws an explicit line between transport success and business outcome.
+    A booking that fails for lack of availability, or a card that is declined, still
+    returns success:true; the business outcome lives in operation-specific,
+    customer-safe, translated message fields. success:false means a technical failure.
+  display_guidance: >-
+    error_title / error_body "could contain technical information, and are always in
+    English, so our suggestion is they are logged rather than displayed". The
+    customer-facing message fields ARE translated into the request language and are
+    written to be shown.
+  rfc9457: false
+  artifact: errors/autoura-problem-types.yml
+pagination:
+  style: limit
+  params: [limit]
+  response_fields: []
+  note: >-
+    Search endpoints take a limit parameter (documented examples use limit=3 and
+    limit=10). Autoura publishes no cursor, offset, page or total-count field and no
+    next-page link. An agent cannot page past the first result set.
+  coverage: partial
+idempotency:
+  supported: false
+  coverage: none
+  header: null
+  scope: []
+  note: >-
+    No idempotency key, no replay-protection contract, and no documented
+    at-most-once semantics anywhere in the API reference, the MCP guides or the
+    changelog. The consumer write surface (visitplan_new, visitplan_update,
+    preferences_update, visitplan_moment_update) is MCP-only and the provider's own
+    guidance substitutes a behavioural rule for a mechanism -- "Always check for
+    existing objects before creating new ones", "Create a new plan only after the
+    existing-plan check", "avoid redundant updates". That is instruction to the
+    agent, not a guarantee from the server: a retried visitplan_new after a dropped
+    response will create a second plan.
+  evidence:
+    - https://www.planmyvisit.to/skill.md
+    - https://www.autoura.com/core/pai/skill.md
+concurrency_control:
+  supported: true
+  mechanism: update key
+  note: >-
+    The PlanMyVisit guide requires "the required current update key" on visit-plan
+    updates and tells agents to honour a refresh_required response. That is optimistic
+    concurrency, not idempotency -- it stops a stale write, it does not make a retry safe.
+  evidence: https://www.planmyvisit.to/skill.md
+reversibility:
+  grade: documented
+  applies: true
+  note: >-
+    Autoura documents one true reversal path and states no window for it. Most of the
+    write surface is last-write-wins field updates rather than events that need
+    reversing.
+  surfaces:
+    - write: visitplan_delete
+      reversal: none
+      operation_id: null
+      window: null
+      provider_statement: '"Plan deletion is permanent and allowed only in supported states"'
+      grade: none
+      note: Explicitly irreversible, and the provider says so plainly. That is a documented absence, not a gap.
+    - write: visitplan_update (state -> active)
+      reversal: undocumented
+      window: >-
+        Activation itself is time-boxed -- allowed only "within the allowed timing
+        window and role permissions" -- but the window's length is not published and
+        no de-activation path is documented.
+      grade: none
+    - write: visitplan_moment_update
+      reversal: visitplan_moment_update
+      operation_id: visitplan_moment_update
+      window: 'while the plan and attendee are active'
+      provider_statement: '"Record a moment done or not done ... Moment updates change completion only."'
+      grade: documented
+      note: >-
+        The reversal is the same call with the opposite value, and the window is
+        stated as a state condition rather than a duration. Real, but soft.
+    - write: preferences_update
+      reversal: preferences_update
+      window: null
+      grade: documented
+      note: Partial update; a value can be set back. No versioning or history is exposed.
+    - write: companion invitation / block / disconnect
+      reversal: unblock
+      window: null
+      grade: documented
+      provider_statement: >-
+        "block, unblock or disconnect a supported relationship" -- unblock is named,
+        so the reversal exists; no window is published.
+  bookings_note: >-
+    Autoura's payout policy discusses refunds and booking holds, but booking and
+    payment are not on the public API surface, so no refund or void operation is
+    catalogued here.
+  window_warning: >-
+    NO WINDOW IS ASSERTED THAT AUTOURA DOES NOT PUBLISH. Where the docs state only a
+    state condition, that is what is recorded.
+dry_run_mode:
+  supported: false
+  note: >-
+    No preview, validate or dry-run parameter is documented on any surface. The
+    sandbox posture is a shared public test API key against live read data
+    (sandbox/autoura-sandbox.yml), not a simulated environment.
+versioning:
+  scheme: none
+  provider_statement: '"We don''t version APIs (currently). Changes are published on the changelog."'
+  current: null
+  header: null
+  uri_path: false
+  docs: https://www.autoura.com/docs/api
+  note: >-
+    There is no version in the path, no version header and no dated version train.
+    The changelog is the only record of change, and it shows removals as well as
+    additions -- "Removed car as transport mode", "Removed food-pass, use event-pass
+    instead", "did removed from new profile API". An unversioned API that removes
+    fields is a breaking-change surface with no opt-out.
+  artifact: lifecycle/autoura-lifecycle.yml
+localization:
+  param: lang
+  default: en
+  docs: https://www.autoura.com/docs/api/languages
+  note: >-
+    Every endpoint supports lang. Autoura warns that translated text can exceed the
+    max lengths its reference states for English, and that content may contain emoji.
+data_formats:
+  dates: YYYY-MM-DD
+  times: local time, with a UTC equivalent also returned wherever comparison is needed
+  numbers: decimal point (5.00, never 5,00); localisation is the client's job
+  multiline_text: >-
+    Marked as such in the reference; clients should render it with the CSS
+    white-space rule set to pre-wrap.
+caching:
+  cdn: Fastly
+  scope: data and audio responses
+  images: Cloudinary
+  uncached_endpoints: ['/api/whoami']
+  note: >-
+    Caching is load-bearing for correctness here: Autoura warns that a wrongly
+    authenticated client can appear to work against cached endpoints, which is why it
+    publishes WhoAmI as the authentication test.
+request_tracing:
+  request_id_header: null
+  note: No correlation or request-id header is documented. A metadata field (up to 500 characters) can be echoed through the preference-sharing invite/poll/webhook flow for cross-referencing.
+rate_limit_signaling:
+  headers: []
+  note: >-
+    No rate-limit headers and no 429 contract are published. See
+    rate-limits/autoura-rate-limits.yml -- the published limits are plan quotas, not
+    request rates.
+  artifact: rate-limits/autoura-rate-limits.yml
+agent_conventions:
+  tool_discovery: >-
+    Autoura instructs agents NOT to hard-code MCP tool names or schemas and to call
+    tools/list at the start of every session, because tool availability "may vary
+    between accounts and over time".
+  guidance_tiers: >-
+    The published skill splits its own documents into strategy ("guidance only -- do
+    not execute directly from these") and execution ("procedural, and should be
+    followed"). The provider is telling the agent which of its documents are safe to
+    act on -- an unusual and genuinely useful convention.
+  fabrication_rule: >-
+    "never fabricate venue facts" -- agents are told to file a content_gap_report
+    instead, and a product_gap_report before offering a workaround.
+  confirmation_rule: >-
+    Explicit human confirmation is required before consequential companion actions
+    (sending or accepting invitations, blocking, disconnecting, changing location
+    sharing) and before high-risk date or plan-language changes.

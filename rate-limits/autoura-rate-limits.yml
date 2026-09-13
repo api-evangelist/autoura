@@ -3,91 +3,86 @@ specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
 provider: Autoura
 providerId: autoura
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/docs/api
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
-tags:
-  - Tourism
-  - Tours
-  - Travel
-  - Destinations
-  - Experiences
-  - Digital Tourism
-  - Rate Limiting
-  - Quotas
-  - Throttling
-description: Machine-readable rate limit definitions for the Autoura API surface. Captures per-tier quotas,
-  burst behavior, response signaling, and recovery semantics. Defaults are scaffold values to be replaced
-  with published provider limits.
+modified: '2026-09-13'
+supersedes:
+  method: generated
+  modified: '2026-05-04'
+  note: >-
+    The previous file was a bulk-sweep scaffold asserting X-RateLimit-* headers, a 429
+    contract and per-minute limits of 10/100/1000. NONE of that is published by
+    Autoura. It has been replaced with what the provider actually documents, which is
+    nothing on request rate and three quotas on consumption.
+tags: [Tourism, Travel, Quotas, Rate Limiting]
+description: >-
+  Autoura publishes NO request-rate limits and NO rate-limit response headers. What it
+  does publish are plan-level consumption quotas, which throttle how much content and
+  how many consumer profiles an account can create -- not how fast it can call.
+limit_count: 0
+limit_count_note: >-
+  An honest zero. Every documentation surface was read -- the API reference, the
+  authentication and concepts pages, the changelog, both agent skills and the
+  authentication references -- and no per-second, per-minute, per-hour or per-day
+  request limit appears on any of them.
 headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
+  limit: null
+  remaining: null
+  reset: null
+  retryAfter: null
+  policy: null
+headers_note: >-
+  No X-RateLimit-*, RateLimit-* or Retry-After header is documented, and none was
+  observed on the live unauthenticated 401 responses probed on 2026-09-13 against
+  /api/whoami, /api/stops/search, /api/visits/search and /api/characters/search.
 responseCodes:
-  throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
-limits:
-  - tier: free
-    name: Free Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 10
-    burst: 20
-    timeFrame: minute
-    applies:
-      - Autoura Experience API
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
-    applies:
-      - Autoura Experience API
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 100
-    burst: 200
-    timeFrame: minute
-    applies:
-      - Autoura Experience API
-  - tier: professional
-    name: Professional Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - Autoura Experience API
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
-    scope: contract
-    metric: requests_per_minute
-    limit: 1000
-    burst: 5000
-    timeFrame: minute
-    applies:
-      - Autoura Experience API
+  throttled: null
+  quotaExceeded: null
+  note: No 429 contract is published. The only status observed unauthenticated is 401.
+limits: []
+quotas:
+  note: >-
+    These are consumption ceilings attached to a subscription tier, taken from the
+    published pricing page. They limit what an account can CREATE, not how often it
+    can call. Full tier detail in plans/autoura-plans-pricing.yml.
+  entries:
+    - {tier: Starter, metric: new_profiles, limit: 150, timeFrame: month, escape_hatch: 'bring your own OpenAI/ElevenLabs key'}
+    - {tier: Scale, metric: new_profiles, limit: 150, timeFrame: month, escape_hatch: 'bring your own OpenAI/ElevenLabs key'}
+    - {tier: Enterprise, metric: new_profiles, limit: 150, timeFrame: month, escape_hatch: 'bring your own OpenAI/ElevenLabs key'}
+    - {tier: Starter, metric: moveme_generations, limit: 10, timeFrame: month}
+    - {tier: Scale, metric: moveme_generations, limit: 50, timeFrame: month}
+    - {tier: Enterprise, metric: moveme_generations, limit: 100, timeFrame: month}
+    - {tier: Starter, metric: characters, limit: 3, timeFrame: account}
+    - {tier: Scale, metric: characters, limit: 8, timeFrame: account}
+    - {tier: Starter, metric: visits, limit: 2, timeFrame: account}
+    - {tier: Scale, metric: visits, limit: 10, timeFrame: account}
+    - {tier: Enterprise, metric: visits, limit: 25, timeFrame: account}
+    - {tier: Scale, metric: routes, limit: 10, timeFrame: account}
+    - {tier: Enterprise, metric: routes, limit: 50, timeFrame: account}
 policies:
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
+  - name: Caching in place of throttling
+    description: >-
+      Autoura fronts the data and audio APIs with the Fastly CDN and images with
+      Cloudinary. A cached read does not reach origin, which is plausibly why no
+      request-rate limit is published -- but it gives a client no runtime signal
+      either way.
+    source: https://www.autoura.com/docs/api/concepts
+  - name: Polling cadence (documented, not enforced)
+    description: >-
+      The only cadence Autoura publishes anywhere is guidance for its own
+      preference-sharing flow - "In our integrations we poll every 750ms", with the
+      QR code withdrawn after 180 seconds. That is advice, not a limit.
+    source: https://www.autoura.com/docs/api/integrations/signin
+gaps:
+  - id: no-runtime-rate-signal
+    severity: high
+    detail: >-
+      An agent calling Autoura has no way to learn how much budget it has left or when
+      to back off. There is no header to read, no documented 429, and no published
+      number to plan against. For a surface whose primary consumer is now an
+      autonomous agent, this is the largest single ergonomic gap in the profile.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

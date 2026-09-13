@@ -1,0 +1,76 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/docs/api/authentication
+note: >-
+  Autoura publishes a SHARED PUBLIC TEST API KEY on its authentication page and
+  invites anyone to use it. That is the whole of its sandbox posture -- there is no
+  separate test environment, no test-vs-live mode, no key prefix separating them, and
+  no fixture or trigger tooling. The published key is recorded verbatim below because
+  the provider publishes it in the clear as documentation; it is not a credential
+  obtained by any other means.
+test_vs_live:
+  separated: false
+  key_prefixes: none
+  modes: none
+  note: >-
+    The test key is a real key against real data on the production host. Autoura's own
+    framing is "You can use our test API key if you just want to kick the tyres".
+    There is no sandbox host: every documented example calls https://api.autoura.com
+    directly.
+credentials:
+  - kind: api-key
+    value: 7757a1969aaba8c3f8e717ffa462fe
+    scope: read-only evaluation of the public content APIs
+    header: 'Authorization: Bearer 7757a1969aaba8c3f8e717ffa462fe'
+    published_at: https://www.autoura.com/docs/api/authentication
+    note: >-
+      Published by Autoura in its public documentation. Autoura states explicitly that
+      API keys are expected to be used in client-side code and that "there is no method
+      to access customer details or other GDPR related information with these API keys".
+verification:
+  endpoint: https://api.autoura.com/api/whoami
+  why: >-
+    The only endpoint Autoura leaves out of the Fastly cache, so it is the one true
+    test of whether a credential is actually working. Autoura warns that other
+    endpoints "may be cached hence may appear they work".
+runnable_examples:
+  - description: three food stops, information-only booking style, ranked by score
+    url: 'https://api.autoura.com/api/stops/search?stop_types=food&booking_style=info&order_by=score&limit=3'
+  - description: three food-bar stops ranked by score
+    url: 'https://api.autoura.com/api/stops/search?stop_types=food-bar&order_by=score&limit=3'
+  - description: ten food stops for a group of friends
+    url: 'https://api.autoura.com/api/stops/search?stop_types=food&group_context=friends&limit=10'
+runnable_examples_note: >-
+  Published verbatim in the API reference, which renders live results from them on
+  the docs page itself.
+live_demonstrations:
+  - name: Uptaste
+    url: https://www.uptaste.com
+    what: >-
+      Autoura's own food-tour brand, published as a worked example of building on the
+      API. The preference-sharing QR flow is live in the top right corner.
+  - name: MoveMeAlong
+    url: https://www.movemealong.com/
+    what: Consumer surface for creating MoveMe audio experiences.
+  - name: PlanMyVisit
+    url: https://www.planmyvisit.to/
+    what: The consumer visit-planning surface the MCP tools drive.
+agent_sandbox:
+  available: false
+  note: >-
+    There is no unauthenticated or test path into the MCP endpoint. An agent must hold
+    a real account: either an OAuth client through dynamic registration, or an
+    email-code token bound to a real human account. tools/list returns 401 anonymously,
+    so even the tool schemas cannot be read without onboarding.
+gaps:
+  - id: shared-test-key
+    severity: medium
+    detail: >-
+      One key published for everyone means no per-integrator isolation, no way to
+      rotate for a single consumer, and no way to tell evaluation traffic apart from
+      anyone else's.
+  - id: no-test-mode
+    severity: medium
+    detail: >-
+      Nothing lets an integrator exercise the write surface -- profile creation,
+      identity invites, visit plans -- without touching production.

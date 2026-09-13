@@ -1,0 +1,147 @@
+generated: '2026-09-13'
+method: derived
+source: mcp/autoura-mcp.yml + Autoura's published REST reference at https://www.autoura.com/docs/api
+note: >-
+  Autoura publishes NO OpenAPI, so this crosswalk cannot bind tools to operationIds
+  the way the reference implementation does. It binds them instead to the REST
+  endpoint PATHS the provider documents, which is the strongest binding the
+  published material supports. Confidence is set accordingly and nothing was
+  invented: every path below was read either from the provider's API reference or
+  from the compiled site bundle that reference renders from, and every one of them
+  was probed live (all return HTTP 401 "Missing authorization header" unauthenticated,
+  which confirms they exist and are gated rather than absent).
+surfaces:
+  openapi:
+    present: false
+    note: >-
+      Probed /openapi.json, /openapi.yaml, /swagger.json, /v1/openapi.json,
+      /api-docs, /docs, /redoc on api.autoura.com (all 404) and on www.autoura.com
+      (all 200 SPA shell). No machine-readable REST contract is published.
+  graphql:
+    present: false
+    note: /graphql and /api/graphql both 404 on api.autoura.com.
+  rest:
+    documented: true
+    base: https://api.autoura.com/api
+    reference: https://www.autoura.com/docs/api
+    auth: 'Authorization: Bearer <API key>'
+  mcp:
+    endpoint: https://api.autoura.com/api/mcp
+    gated: true
+    note: anonymous tools/list returns 401 with an RFC 9728 challenge.
+crosswalk:
+  - tool: visit_venues_search
+    category: venue-knowledge
+    rest: ['GET /api/visits/search']
+    binding: rest
+    confidence: high
+    note: Documented as "Search visits" in the API reference; the MCP tool searches the same venue objects by lat/lng.
+  - tool: visit_knowledge_get
+    category: venue-knowledge
+    rest: ['GET /api/visits/get']
+    binding: rest
+    confidence: high
+    note: >-
+      The 30 July 2026 changelog treats "Visit Get and visit_knowledge_get" as one
+      change applied to both surfaces, which is the provider stating the binding.
+  - tool: stop_get
+    category: b2b
+    rest: ['GET /api/stops/get']
+    binding: rest
+    confidence: high
+    note: 30 July 2026 changelog -- "Stop Get API and stop_get MCP now include the Stop's direct Fact count under facts".
+  - tool: characters_search
+    category: venue-knowledge
+    rest: ['GET /api/characters/search']
+    binding: rest
+    confidence: high
+  - tool: location_get
+    category: location
+    rest: ['GET /api/identity/get']
+    binding: rest
+    confidence: low
+    note: >-
+      The DID/identity location service is the nearest documented REST equivalent,
+      but the consumer location tools were added to MCP on 27 July 2026 and may be
+      MCP-native. Mapped by semantics only.
+  - tool: location_update
+    category: location
+    rest: []
+    binding: none
+    confidence: low
+    note: No documented REST write path for consumer location.
+  - tool: preferences_get
+    category: preferences
+    rest: ['POST /api/identity/share/poll', 'GET /api/identity/get']
+    binding: rest
+    confidence: medium
+    note: >-
+      The REST preference surface is consent-brokered (invite -> poll or webhook ->
+      subsequent get for up to 7 days). The MCP tool reads the authenticated human's
+      own preferences directly, so the shapes overlap but the trust model differs.
+  - tool: preferences_update
+    category: preferences
+    rest: ['POST /api/identity/new']
+    binding: rest
+    confidence: low
+    note: The New Profile REST API can SET preferences at creation; there is no documented REST partial-update endpoint.
+mcp_only:
+  - tool: visitplan_new
+    reason: Visit plans are a PlanMyVisit consumer object with no public REST surface.
+  - tool: visitplan_get
+    reason: No public REST surface.
+  - tool: visitplans_search
+    reason: No public REST surface. Added to the B2B MCP 27 July 2026 as a permission-controlled capability.
+  - tool: visitplan_update
+    reason: No public REST surface.
+  - tool: visitplan_member_outcomes_update
+    reason: No public REST surface.
+  - tool: visitplan_moment_update
+    reason: No public REST surface.
+  - tool: visitplan_note_new
+    reason: No public REST surface.
+  - tool: visitplan_delete
+    reason: No public REST surface.
+  - tool: personal_data_export_request
+    reason: Consumer data-subject request; no public REST surface.
+  - tool: content_gap_report
+    reason: Agent feedback channel; no public REST surface.
+  - tool: product_gap_report
+    reason: Agent feedback channel; no public REST surface.
+  - tool: brand_overview
+    reason: B2B brand-context composite; no public REST surface.
+  - tool: planmyvisit_sign_in_or_sign_up
+    reason: WebMCP browser-session flow, not an API operation.
+rest_only:
+  - capability: Routes
+    endpoints: ['GET /api/routes/search', 'GET /api/routes/get']
+    note: Sequential audio tours with ordered stops. No consumer MCP tool documented.
+  - capability: Stops search
+    endpoints: ['GET /api/stops/search', 'GET /api/stops/availability', 'GET /api/stops/types']
+  - capability: MoveMe audio
+    endpoints: ['GET /api/moveme/search', 'GET /api/moveme/get', 'GET /api/audio/get']
+  - capability: Characters
+    endpoints: ['GET /api/characters/get']
+  - capability: Entities
+    endpoints: ['GET /api/brands/get', 'GET /api/designers/get', 'GET /api/suppliers/get', 'GET /api/affiliates/get', 'GET /api/affiliates/search']
+  - capability: Identity and consent brokering
+    endpoints: ['POST /api/identity/share/invite', 'POST /api/identity/share/poll', 'GET /api/identity/get', 'POST /api/identity/new']
+  - capability: Agent sign-in (open)
+    endpoints: ['POST /api/identity/open/register', 'POST /api/identity/open/signin_code_send', 'POST /api/identity/open/verify']
+  - capability: Diagnostics
+    endpoints: ['GET /api/whoami']
+    note: Uncached on purpose so it is a true authentication test.
+  - capability: QR generation
+    endpoints: ['GET /api/qr']
+coverage:
+  tools_named: 21
+  tools_bound: 8
+  mcp_only: 13
+  rest_endpoints_documented: 22
+  rest_endpoints_with_a_tool: 7
+divergence_note: >-
+  The two surfaces are NOT projections of one core. REST is the B2B content and
+  consent surface (routes, stops, entities, preference brokering); MCP is the
+  agent-and-consumer surface, and the entire visit-plan object model -- the thing
+  PlanMyVisit is for -- exists ONLY over MCP. An integrator who reads only the REST
+  reference will not know visit plans exist.

@@ -1,0 +1,109 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/docs/api/changelog
+scheme: dated
+versioning: none
+current_version: null
+note: >-
+  Autoura's changelog is dated, not versioned -- it is the ONLY record of change for
+  an unversioned API. It runs from 15 October 2022 to 30 July 2026 across 52 dated
+  entries; the recent window is captured below. Read on 2026-09-13 from the
+  provider's published changelog page.
+entry_count_total: 52
+window: recent
+entries:
+  - date: '2026-07-30'
+    breaking: false
+    additions:
+      - Stop Get and the stop_get MCP tool now include the Stop's direct Fact count under facts
+      - Visit Get and visit_knowledge_get now include stops_facts_count -- source-backed evidence from nearby Stops selected by human curators
+      - Visit Get now includes annual visitor numbers, the latest three content gaps, and a freshness-checked timestamp
+      - Stop Get now includes a freshness-checked timestamp
+      - Visit Search results include the latest three content_gaps with resolved/unresolved status
+      - Added order_by=content_gaps and has_content_gaps to Visit Search
+  - date: '2026-07-29'
+    breaking: false
+    additions:
+      - Visit Get brand information now includes curator_role, classifying the curator's relationship to the visit
+  - date: '2026-07-28'
+    breaking: false
+    additions:
+      - Visit Get brand information expanded with website_url, summary, background, tip, tip_summary and why
+      - Curation tips moved into the brand section
+  - date: '2026-07-27'
+    breaking: false
+    additions:
+      - Added location_get and location_update to the consumer MCP
+      - Added visit plan search and get capabilities to the permission-controlled B2B MCP
+  - date: '2026-07-26'
+    breaking: false
+    additions:
+      - Added order_by=visitors to Visit Search, ordering by annual visitor count
+  - date: '2026-07-13'
+    breaking: true
+    breaking_note: consumer MCP tool names were realigned to noun-first forms
+    additions:
+      - Added preferences_update to the consumer MCP
+      - Aligned consumer MCP tool names to their current noun-first forms
+  - date: '2026-07-06'
+    breaking: true
+    breaking_note: the coming-up summary field was removed
+    changes:
+      - Visit Get returns coming-up items in coming_up; the coming-up summary is no longer returned
+  - date: '2026-07-04'
+    breaking: false
+    additions:
+      - Added timezone to Visit Get, Route Get and Stop Get
+  - date: '2026-06-15'
+    breaking: false
+    additions:
+      - Added fact count and preview to Visit Get
+  - date: '2026-06-03'
+    breaking: false
+    additions:
+      - Added autoura_url to Visit Get
+  - date: '2026-05-27'
+    breaking: false
+    additions:
+      - Added questions to Visit Get
+      - Added autoura_url to Route Get and Route Search
+  - date: '2026-05-26'
+    breaking: false
+  - date: '2026-03-13'
+    breaking: false
+  - date: '2026-02-10'
+    breaking: false
+  - date: '2026-01-30'
+    breaking: false
+  - date: '2026-01-25'
+    breaking: false
+  - date: '2025-12-22'
+    breaking: true
+    breaking_note: >-
+      Renames and moves with no deprecation window - food_specific_meal became
+      specific_meals (now an array), nopref was removed, and service.mobility moved
+      to discovery.accessibility.
+    changes:
+      - food_specific_meal renamed to specific_meals, now an array so multiple meals can be selected
+      - nopref removed; an empty array now means no specific meals
+      - service.mobility moved to discovery.accessibility
+      - 5 new accessibility values (claustro, light, heights, crowds, noise)
+      - 7 new discovery values (rhythm, activity_general, structure, museums, social, interests, avoid)
+      - 2 new food values (local, style)
+  - date: '2025-12-20'
+    breaking: false
+    additions:
+      - Added pescatarian_strict to profile diet values
+observed_cadence:
+  '2026': 16 dated entries to 30 July
+  note: >-
+    A six-day run of daily entries from 26 to 30 July 2026 is the densest stretch in
+    the log. Nothing has been published since 30 July 2026 as read on 2026-09-13 --
+    a six-week gap against a changelog that had been running weekly.
+findings:
+  - id: breaking-changes-without-versioning
+    severity: medium
+    detail: >-
+      The log records field renames, field removals and a tool-name realignment on an
+      API the provider states it does not version and for which it publishes no
+      deprecation policy. Three of the eighteen recent entries are breaking.

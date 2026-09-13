@@ -1,0 +1,229 @@
+generated: '2026-09-13'
+method: probed
+source: live GET of the named /.well-known/ path list on every host this record knows
+note: >-
+  Autoura serves a real RFC 8414 / RFC 9728 / OpenID Connect discovery surface for
+  its MCP endpoint, and serves it from three different path roots on the same API
+  host. It serves nothing else: no security.txt, no api-catalog, no apis.json, no
+  ai-plugin, no AAuth resource, no agent card.
+  READ THE CONTROLS BEFORE READING THE ROWS. www.autoura.com is a Vue single-page
+  app whose server answers HTTP 200 with the SAME 2,685-byte HTML shell for every
+  unmatched path, including the negative control. Every 200 on that host carrying
+  2685 bytes of text/html is therefore a MISS, not a hit -- only the three JSON
+  documents, which are proxied through from the API host and come back with a
+  different byte count and no HTML, are real.
+hit_count: 3
+controls:
+  - host: https://www.autoura.com
+    soft_404_control: /.well-known/autoura-negative-control-7f3ab91c.json
+    status: 200
+    bytes: 2685
+    content_type: text/html
+    verdict: catch-all
+    note: SPA shell returned for a path that cannot exist; every text/html 200 of 2685 bytes on this host is a miss.
+  - host: https://api.autoura.com
+    soft_404_control: /.well-known/autoura-negative-control-7f3ab91c.json
+    status: 404
+    bytes: 2091
+    verdict: clean
+    note: honest 404 on a path that cannot exist; this host's positives are trustworthy.
+  - host: https://www.planmyvisit.to
+    soft_404_control: /.well-known/autoura-negative-control-7f3ab91c.json
+    status: 404
+    verdict: clean
+path_echo_control: passed
+hosts:
+  - host: https://api.autoura.com
+    documents:
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: autoura-oauth-authorization-server.json
+      - path: /.well-known/openid-configuration
+        status: 200
+        file: autoura-openid-configuration.json
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        file: autoura-oauth-protected-resource.json
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/api-catalog.json
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/ucp.json
+        status: 404
+      - path: /.well-known/acp.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+      - path: /.well-known/apis.json
+        status: 404
+      - path: /apis.json
+        status: 404
+      - path: /apis.yml
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://api.autoura.com/api
+    note: the MCP resource root; only the protected-resource document lives here
+    documents:
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        file: autoura-oauth-protected-resource.json
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+      - path: /.well-known/apis.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://api.autoura.com/api/auth
+    note: >-
+      the authorization server issuer named in authorization_servers[] of the
+      protected-resource document. It serves the RICHEST discovery document of the
+      three roots -- the OIDC one here adds refresh_token, offline_access,
+      subject_types_supported and id_token_signing_alg_values_supported, which the
+      host-root copy omits.
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        file: autoura-openid-configuration.json
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: autoura-oauth-authorization-server.json
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/apis.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+  - host: https://www.autoura.com
+    note: >-
+      SPA catch-all. The three OAuth/OIDC documents are genuinely proxied through
+      and return real JSON; everything else returns the 2,685-byte shell and is a
+      MISS recorded as such.
+    documents:
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: autoura-oauth-authorization-server.json
+      - path: /.well-known/openid-configuration
+        status: 200
+        file: autoura-openid-configuration.json
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        file: autoura-oauth-protected-resource.json
+      - path: /.well-known/security.txt
+        status: 200
+        verdict: soft-404
+        note: SPA shell, 2685 bytes text/html -- not a security.txt. Treated as a miss.
+      - path: /.well-known/api-catalog
+        status: 200
+        verdict: soft-404
+      - path: /.well-known/api-catalog.json
+        status: 200
+        verdict: soft-404
+      - path: /.well-known/ai-plugin.json
+        status: 200
+        verdict: soft-404
+      - path: /.well-known/ucp.json
+        status: 200
+        verdict: soft-404
+      - path: /.well-known/acp.json
+        status: 200
+        verdict: soft-404
+      - path: /.well-known/aauth-resource.json
+        status: 200
+        verdict: soft-404
+      - path: /.well-known/apis.json
+        status: 200
+        verdict: soft-404
+      - path: /apis.json
+        status: 200
+        verdict: soft-404
+      - path: /apis.yml
+        status: 200
+        verdict: soft-404
+      - path: /.well-known/agent-card.json
+        status: 200
+        verdict: soft-404
+        note: SPA shell, not an AgentCard. No a2a/ artifact written.
+      - path: /.well-known/agent.json
+        status: 200
+        verdict: soft-404
+  - host: https://autoura.com
+    note: apex 301s to https://www.autoura.com/ for every path
+    documents:
+      - path: /.well-known/security.txt
+        status: 301
+      - path: /.well-known/openid-configuration
+        status: 301
+      - path: /.well-known/oauth-authorization-server
+        status: 301
+      - path: /.well-known/oauth-protected-resource
+        status: 301
+      - path: /.well-known/api-catalog
+        status: 301
+      - path: /.well-known/apis.json
+        status: 301
+      - path: /apis.json
+        status: 301
+      - path: /.well-known/agent-card.json
+        status: 301
+      - path: /.well-known/agent.json
+        status: 301
+  - host: https://www.planmyvisit.to
+    note: >-
+      Autoura's consumer product host. Serves a real llms.txt at /llms.txt and a
+      real skill.md, but no /.well-known/ surface of its own -- its agents are sent
+      to api.autoura.com for auth.
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+      - path: /.well-known/apis.json
+        status: 404
+      - path: /apis.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+a2a_probe:
+  result: miss
+  note: >-
+    No agent card on any host. www.autoura.com answers 200 for both card paths but
+    with the SPA shell, which is the dominant false positive on this probe and is
+    recorded as a miss. NOTHING was written to a2a/ and no AgentCard pointer was
+    emitted.

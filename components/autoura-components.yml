@@ -1,0 +1,65 @@
+generated: '2026-09-13'
+method: searched
+source: https://www.autoura.com/docs/api/integrations
+note: >-
+  Client-side and embeddable surfaces Autoura publishes, as distinct from server-side
+  SDKs (of which there are none -- see packages/autoura-packages.yml). The booking
+  widget loader was observed directly in the <head> of https://www.autoura.com/ on
+  2026-09-13.
+families:
+  - name: Booking widget
+    kind: embeddable-widget
+    slug: autoura-stop-book
+    loaders:
+      - {kind: javascript, url: 'https://api.autoura.com/widgets/autoura-stop-book/js/book.js', probed: '2026-09-13'}
+      - {kind: stylesheet, url: 'https://api.autoura.com/widgets/autoura-stop-book/css/book.css', probed: '2026-09-13'}
+    version: null
+    version_note: >-
+      The loader URLs are UNPINNED -- no version segment, no hash, no query string.
+      A consumer embedding this script cannot tell which build they are getting, and
+      neither can we.
+    docs: https://www.autoura.com/docs/api/integrations/widget
+    observed_in: 'the <head> of https://www.autoura.com/, loaded on every page'
+  - name: QR code integrations
+    kind: hosted-image-endpoint
+    surfaces:
+      - {name: Route QR codes, docs: 'https://www.autoura.com/docs/api/integrations/route_qr'}
+      - {name: Character QR codes, docs: 'https://www.autoura.com/docs/api/integrations/character_qr'}
+      - {name: Sign-in QR code, endpoint: 'https://api.autoura.com/api/qr?data=', docs: 'https://www.autoura.com/docs/api/integrations/signin'}
+    note: >-
+      The QR endpoint renders an identity_invite_key object (URL-encoded) into a
+      scannable image. Autoura publishes the exact prompt text it uses beside it --
+      "Scan the QR code with the Autoura Connect app to sign in".
+  - name: Website sign-in / preference sharing
+    kind: browser-flow
+    docs: https://www.autoura.com/docs/api/integrations/signin
+    note: >-
+      A two-step consent flow (invite, then poll or webhook) that a site embeds to
+      obtain a visitor's Autoura preferences with their consent.
+  - name: WebMCP tools
+    kind: in-page-agent-tools
+    host: https://www.planmyvisit.to/
+    setup: https://www.planmyvisit.to/webmcp
+    docs: https://www.planmyvisit.to/about/instructions/protocols#webmcp
+    note: >-
+      PlanMyVisit pages expose the same tool set as the MCP endpoint directly to an
+      agent running in the visitor's browser, authenticated by the website session.
+      The provider states Codex in the ChatGPT desktop app is supported and tested;
+      Chrome and Edge can expose the tools to developers but their assistants do not
+      yet consume them.
+  - name: AI avatar
+    kind: third-party-embed
+    vendor: Anam
+    surface: PlanMyVisit visit pages
+    availability: paid plans
+    docs: https://www.autoura.com/pricing
+    note: Not an Autoura component -- a third-party avatar Autoura integrates into visit pages.
+apps:
+  - name: Autoura Connect
+    platforms: [iOS, Android]
+    ios: https://apps.apple.com/us/app/autoura-connect/id1515905101
+    android: https://play.google.com/store/apps/details?id=com.autoura.sahra
+    role: >-
+      The consumer end of the consent flow -- scanning an integrator's QR code in this
+      app is what releases preferences to them.
+    whitelabel: 'available on paid plans ("Whitelabel the Autoura Connect app as yours")'

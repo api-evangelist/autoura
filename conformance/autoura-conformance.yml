@@ -1,0 +1,154 @@
+generated: '2026-09-13'
+method: probed
+source: >-
+  live discovery documents on api.autoura.com plus Autoura's published API and agent
+  references
+note: >-
+  Every "conforms: true" below is backed by a document that was fetched, or by a
+  live response header, on 2026-09-13. Autoura publishes no OpenAPI, so nothing was
+  derived from a spec.
+standards:
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      RFC 6749 authorization-code flow advertised at
+      https://api.autoura.com/api/auth/.well-known/oauth-authorization-server
+      (authorization, token, registration and jwks endpoints all named).
+  - id: rfc8414-oauth-authorization-server-metadata
+    conforms: true
+    evidence: well-known/autoura-oauth-authorization-server.json (HTTP 200, valid issuer + jwks_uri)
+  - id: rfc9728-oauth-protected-resource-metadata
+    conforms: true
+    evidence: >-
+      well-known/autoura-oauth-protected-resource.json, and the live MCP 401 returns a
+      WWW-Authenticate Bearer challenge carrying resource_metadata pointing at it --
+      the full round trip works.
+  - id: rfc7591-dynamic-client-registration
+    conforms: true
+    evidence: registration_endpoint https://api.autoura.com/api/auth/oauth2/register advertised in both discovery documents
+  - id: rfc7636-pkce
+    conforms: true
+    evidence: '"code_challenge_methods_supported": ["S256"]'
+  - id: oidc-discovery
+    conforms: true
+    evidence: >-
+      well-known/autoura-openid-configuration.json -- subject_types_supported [public],
+      id_token_signing_alg_values_supported [RS256], offline_access.
+  - id: mcp
+    conforms: true
+    evidence: >-
+      Hosted remote MCP server at https://api.autoura.com/api/mcp; JSON-RPC tools/list
+      probed and correctly gated. Autoura publishes agent operating guides for both a
+      B2B and a consumer tool surface on the same endpoint.
+  - id: webmcp
+    conforms: true
+    evidence: >-
+      PlanMyVisit exposes the same tool set as WebMCP from the signed-in website
+      session at https://www.planmyvisit.to/webmcp; browser support and setup
+      documented at /about/instructions/protocols#webmcp.
+  - id: agent-skills
+    conforms: true
+    evidence: >-
+      The homepage head carries <link rel="ai-skill" href="/core/pai/skill.md"
+      type="text/markdown">, and the skill indexes 13 further markdown reference
+      documents under /core/pai/docs/. Provider-authored, not ours.
+  - id: llms-txt
+    conforms: partial
+    evidence: >-
+      https://www.planmyvisit.to/llms.txt is a real, well-formed llms.txt (HTTP 200,
+      text/plain, 3,181 bytes). https://www.autoura.com/llms.txt is a soft-404 -- HTTP
+      200 serving the 2,685-byte SPA shell. The consumer brand publishes one; the
+      platform brand does not.
+  - id: w3c-did
+    conforms: true
+    evidence: >-
+      Autoura publishes DID Documents for consumer profiles and, since 22 October
+      2024, an AI agent definition inside them
+      (https://www.autoura.com/docs/api/profiles/agents). DID service endpoints are
+      live under /api/did/services/profile/.../location.
+  - id: didcomm-v2
+    conforms: true
+    evidence: >-
+      https://www.autoura.com/docs/api/profiles/didcomm -- Autoura requires a
+      DIDCommMessaging service, version 2, in the counterparty DID Document, resolved
+      through the DIF Universal Resolver.
+  - id: a2a
+    conforms: false
+    evidence: >-
+      No agent card. /.well-known/agent-card.json and /.well-known/agent.json probed
+      on autoura.com, www.autoura.com, api.autoura.com, api.autoura.com/api,
+      api.autoura.com/api/auth and www.planmyvisit.to -- 404 or SPA shell everywhere.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: >-
+      Proprietary {success, error_title, error_body} envelope on REST and a bare
+      {error} on MCP. No application/problem+json.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: /.well-known/security.txt returns 404 on api.autoura.com and the SPA shell on www.autoura.com.
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: No deprecation policy or Sunset/Deprecation header support is documented.
+  - id: idempotency
+    conforms: false
+    evidence: No idempotency key or replay-protection contract on any surface. See conventions/autoura-conventions.yml.
+  - id: pagination
+    conforms: partial
+    evidence: A limit parameter on search endpoints; no cursor, offset, total or next link.
+  - id: openapi
+    conforms: false
+    evidence: >-
+      Probed /openapi.json, /openapi.yaml, /swagger.json, /v1/openapi.json, /api-docs,
+      /docs, /redoc on api.autoura.com (404) and www.autoura.com (SPA shell). No
+      machine-readable REST contract published.
+  - id: asyncapi
+    conforms: false
+    evidence: No AsyncAPI document. A webhook delivery option exists (see asyncapi/autoura-webhooks.yml) but no event spec.
+  - id: hsts
+    conforms: true
+    evidence: 'strict-transport-security: max-age=31557600 observed on api.autoura.com; max-age=15552000 on www.autoura.com.'
+domain_standards:
+  - id: iata-special-meal-codes
+    conforms: true
+    market: travel and hospitality
+    evidence: >-
+      The profile preference schema carries specific_meals as an array of IATA airline
+      special-meal codes, enumerated verbatim in the provider's own API reference:
+      DBML (Diabetic), GFML (Gluten free), VGML (Vegetarian vegan), MOML (Halal),
+      HNML (Hindu non-vegetarian), JVML (Jain), KSML (Kosher), HFML (High fibre),
+      LCML (Low calorie), LSML (Low sodium), LPML (Low protein), PRML (Low purine),
+      LFML (Low fat), NLML (No lactose), BLML (Bland).
+    spec_location: >-
+      https://www.autoura.com/docs/api/integrations/new_profile and
+      https://www.autoura.com/docs/api/profiles/preferences -- the food_specific_meals /
+      specific_meals attribute
+    provider_statement: >-
+      "Religious & medical diets ... Based on IATA airline meal codes. We only use the
+      IATA meal codes for religious meal codes."
+    why_it_matters: >-
+      An airline, GDS, hotel PMS or catering system already speaks these codes. A
+      travel integrator can map dietary requirements between Autoura and an existing
+      passenger record with no bespoke vocabulary translation, which is exactly the
+      distinction domain_standard_conformance draws.
+  - id: w3c-decentralized-identifiers
+    conforms: true
+    market: identity
+    evidence: >-
+      Consumer profiles are addressed by DID and Autoura publishes resolvable DID
+      Documents carrying an AI agent definition; preference and location sharing are
+      brokered against those DIDs.
+    spec_location: https://www.autoura.com/docs/api/profiles/didcomm
+  - id: ogc
+    conforms: false
+    evidence: >-
+      Not probed by path pattern. Nothing in Autoura's docs, baseURLs or prose names
+      WMS/WFS/WCS/WMTS/CSW or "OGC API" -- location data is plain lat/lng JSON, so no
+      OGC evidence pointed anywhere to probe.
+compliance_program:
+  published: false
+  certifications: []
+  note: >-
+    No SOC 2, ISO 27001, PCI DSS, HIPAA or FedRAMP claim and no trust centre. The
+    legal section (/legal/privacy, /legal/terms, /legal/affiliate, /legal/supplier,
+    /legal/booking, /legal/payouts) is contractual, not a compliance posture. No
+    Compliance pointer is emitted.

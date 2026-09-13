@@ -1,0 +1,1 @@
+{"resource":"https://api.autoura.com/api/mcp","authorization_servers":["https://api.autoura.com/api/auth"],"scopes_supported":["files:read","files:write","offline_access"],"resource_documentation":"https://www.autoura.com/docs/api"}
