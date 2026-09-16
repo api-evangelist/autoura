@@ -122,6 +122,13 @@ apis:
       - AI Agents
       - Tourism
       - Travel
+      - Experience
+      - Visit Planning
+    tags_raw:
+      - MCP
+      - AI Agents
+      - Tourism
+      - Travel
       - Experiences
       - Visit Planning
     properties:
