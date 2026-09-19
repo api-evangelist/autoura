@@ -18,7 +18,7 @@ tags:
   - Tourism
   - Tours
   - Travel
-  - Destinations
+  - Destination
   - Experience
   - Digital Tourism
 tags_raw:
@@ -82,6 +82,13 @@ apis:
       to provide personalized local recommendations.
     humanURL: https://www.autoura.com/docs/api
     tags:
+      - Tourism
+      - Tours
+      - Travel
+      - Destination
+      - Activities
+      - Cuisine
+    tags_raw:
       - Tourism
       - Tours
       - Travel
