@@ -151,6 +151,8 @@ apis:
         url: authentication/autoura-authentication.yml
 
 common:
+  - type: FinOps
+    url: finops/autoura-finops.yml
   - url: https://www.autoura.com/blog/
     type: Blog
   - type: DomainSecurity
