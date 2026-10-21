@@ -1,5 +1,7 @@
 aid: autoura
+
 name: Autoura
+
 description: >-
   Autoura is a UK digital experience platform (DXP) for real-world tourism and
   travel experiences, operated by The Spontaneous Travel Company Limited. It
@@ -14,6 +16,7 @@ description: >-
   messaging. A REST API over api.autoura.com serves routes, stops, visits,
   characters, MoveMe audio and a consent-brokered consumer preference graph, with
   dietary requirements keyed on IATA airline special-meal codes.
+
 tags:
   - Tourism
   - Tours
@@ -21,6 +24,7 @@ tags:
   - Destination
   - Experience
   - Digital Tourism
+
 tags_raw:
   - Tourism
   - Tours
@@ -28,7 +32,9 @@ tags_raw:
   - Destinations
   - Experiences
   - Digital Tourism
+
 type: Index
+
 deliveryModel:
   model: saas
   open_source: false
@@ -46,6 +52,7 @@ deliveryModel:
     merchant of record, and a live callable host — https://api.autoura.com/api
     returns a structured 401 on every documented endpoint and
     https://api.autoura.com/api/mcp returns an RFC 9728 challenge.
+
 accessModel:
   pricing: paid
   onboarding: self-serve
@@ -64,93 +71,31 @@ accessModel:
     read-only test API key in its public authentication documentation, so the read
     surface can be exercised with no account, which is what try_now records here.
     Sign-up is self-serve through the pricing page; changing account level is not.
+
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/autoura.png
+
 access: 3rd-Party
+
 created: '2025-03-01'
+
 modified: '2026-10-06'
+
 url: >-
   https://raw.githubusercontent.com/api-evangelist/autoura/refs/heads/main/apis.yml
-specificationVersion: '0.23'
-apis:
-  - aid: autoura:autoura-api
-    name: Autoura Experience API
-    description: >-
-      The Autoura Experience API provides access to tourism content including
-      cuisine guides, destination information, tour itineraries, local activities,
-      and points of interest. Developers can integrate Autoura content into
-      travel applications, tourism websites, and experience booking platforms
-      to provide personalized local recommendations.
-    humanURL: https://www.autoura.com/docs/api
-    tags:
-      - Tourism
-      - Tours
-      - Travel
-      - Destination
-      - Activities
-      - Cuisine
-    tags_raw:
-      - Tourism
-      - Tours
-      - Travel
-      - Destinations
-      - Activities
-      - Cuisine
-    baseURL: https://api.autoura.com/api
-    properties:
-      - type: Documentation
-        url: https://www.autoura.com/docs/api
-      - type: APIReference
-        url: https://www.autoura.com/docs/api
-      - type: Authentication
-        url: https://www.autoura.com/docs/api/authentication
-      - type: GettingStarted
-        url: https://www.autoura.com/docs/api/authentication
-      - type: ChangeLog
-        url: https://www.autoura.com/docs/api/changelog
-      - type: Website
-        url: https://www.autoura.com
 
-  - aid: autoura:autoura-mcp
-    name: Autoura MCP Server
-    description: >-
-      Autoura's hosted remote Model Context Protocol server, the surface it builds
-      for AI agents first. One endpoint carries two permission-scoped tool sets: a
-      B2B set for brands, attractions, tour operators, destinations, designers and
-      suppliers managing experience data, and a consumer set (PlanMyVisit) for agents
-      helping a person plan and carry out a single real-world visit. Authorization is
-      OAuth 2.1 with PKCE and dynamic client registration, advertised through a
-      conformant RFC 9728 protected-resource document; Autoura also documents an
-      email-verification-code path to a 48-hour bearer token for agents onboarding a
-      human account. The same tool set is exposed as WebMCP on PlanMyVisit pages.
-    humanURL: https://www.autoura.com/docs/api/mcp
-    baseURL: https://api.autoura.com/api/mcp
-    tags:
-      - MCP
-      - AI Agents
-      - Tourism
-      - Travel
-      - Experience
-      - Visit Planning
-    tags_raw:
-      - MCP
-      - AI Agents
-      - Tourism
-      - Travel
-      - Experiences
-      - Visit Planning
-    properties:
-      - type: MCPServer
-        url: mcp/autoura-mcp.yml
-      - type: ToolCrosswalk
-        url: mcp/autoura-tool-crosswalk.yml
-      - type: Documentation
-        url: https://www.autoura.com/docs/api/mcp
-      - type: AgentSkill
-        url: skills/_index.yml
-      - type: Authentication
-        url: authentication/autoura-authentication.yml
+specificationVersion: '0.23'
+
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
 
 common:
+  - type: Deprecation
+    url: lifecycle/autoura-lifecycle.yml
+  - type: Hosts
+    url: hosts/autoura-hosts.yml
+  - type: Vendors
+    url: vendors/autoura-vendors.yml
   - type: FinOps
     url: finops/autoura-finops.yml
   - url: https://www.autoura.com/blog/
@@ -235,8 +180,6 @@ common:
     url: scopes/autoura-scopes.yml
   - type: Conventions
     url: conventions/autoura-conventions.yml
-  - type: ErrorCatalog
-    url: errors/autoura-problem-types.yml
   - type: Lifecycle
     url: lifecycle/autoura-lifecycle.yml
   - type: ChangeLog
@@ -255,8 +198,6 @@ common:
     url: plans/autoura-plans-pricing.yml
   - type: RateLimits
     url: rate-limits/autoura-rate-limits.yml
-  - type: LLMsTxt
-    url: llms/autoura-llms.txt
   - type: APIReference
     url: https://www.autoura.com/docs/api
   - type: DeveloperPortal
@@ -273,11 +214,103 @@ common:
     url: https://www.autoura.com/legal/privacy
   - type: Support
     url: https://www.autoura.com/contact
-maintainers:
-  - FN: Kin Lane
-    email: kin@apievangelist.com
+
+apis:
+  - aid: autoura:autoura-api
+    name: Autoura Experience API
+    description: >-
+      The Autoura Experience API provides access to tourism content including
+      cuisine guides, destination information, tour itineraries, local activities,
+      and points of interest. Developers can integrate Autoura content into
+      travel applications, tourism websites, and experience booking platforms
+      to provide personalized local recommendations.
+    humanURL: https://www.autoura.com/docs/api
+    tags:
+      - Tourism
+      - Tours
+      - Travel
+      - Destination
+      - Activities
+      - Cuisine
+    tags_raw:
+      - Tourism
+      - Tours
+      - Travel
+      - Destinations
+      - Activities
+      - Cuisine
+    baseURL: https://api.autoura.com/api
+    properties:
+      - type: Documentation
+        url: https://www.autoura.com/docs/api
+      - type: APIReference
+        url: https://www.autoura.com/docs/api
+      - type: Authentication
+        url: https://www.autoura.com/docs/api/authentication
+      - type: GettingStarted
+        url: https://www.autoura.com/docs/api/authentication
+      - type: ChangeLog
+        url: https://www.autoura.com/docs/api/changelog
+      - type: Website
+        url: https://www.autoura.com
+
+  - aid: autoura:autoura-mcp
+    name: Autoura MCP Server
+    description: >-
+      Autoura's hosted remote Model Context Protocol server, the surface it builds
+      for AI agents first. One endpoint carries two permission-scoped tool sets: a
+      B2B set for brands, attractions, tour operators, destinations, designers and
+      suppliers managing experience data, and a consumer set (PlanMyVisit) for agents
+      helping a person plan and carry out a single real-world visit. Authorization is
+      OAuth 2.1 with PKCE and dynamic client registration, advertised through a
+      conformant RFC 9728 protected-resource document; Autoura also documents an
+      email-verification-code path to a 48-hour bearer token for agents onboarding a
+      human account. The same tool set is exposed as WebMCP on PlanMyVisit pages.
+    humanURL: https://www.autoura.com/docs/api/mcp
+    baseURL: https://api.autoura.com/api/mcp
+    tags:
+      - MCP
+      - AI Agents
+      - Tourism
+      - Travel
+      - Experience
+      - Visit Planning
+    tags_raw:
+      - MCP
+      - AI Agents
+      - Tourism
+      - Travel
+      - Experiences
+      - Visit Planning
+    properties:
+      - type: MCPServer
+        url: mcp/autoura-mcp.yml
+      - type: ToolCrosswalk
+        url: mcp/autoura-tool-crosswalk.yml
+      - type: Documentation
+        url: https://www.autoura.com/docs/api/mcp
+      - type: AgentSkill
+        url: skills/_index.yml
+      - type: Authentication
+        url: authentication/autoura-authentication.yml
+
+x-coverage:
+  state: gated
+  reason: partner-login
+  method: derived
+  generated: '2026-10-20'
+  generator: derive-coverage.py (pre-flight evidence)
+  detail: >-
+    the company serves an API surface but requires credentials before any description of it can be read
+  evidence:
+  - url: https://api.autoura.com/api/mcp
+    status: 401
+  - url: https://www.autoura.com/api/mcp
+    status: 401
+  - url: https://www.autoura.com
+    status: 200
 x-enrichment:
-  date: '2026-09-13'
+  date: '2026-10-20'
   status: enriched
-  artifacts_added: 36
-  pass: local-v3
+  artifacts_added: 0
+  pass: local-v5

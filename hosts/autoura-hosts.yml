@@ -1,0 +1,91 @@
+generated: '2026-10-20'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 6
+  own: 2
+  other_domain: 2
+  platform: 2
+  roles:
+  - api
+  - other
+  - source
+  - website
+hosts:
+- host: api.autoura.com
+  found_by:
+  - apis[]
+  - probed
+  - contract-discovery
+  - well-known
+  - vendor-detect
+  types: []
+  serves:
+  - api
+  - cdn
+  vendor: fastly
+  registrable_domain: autoura.com
+  role: api
+  relation: own
+- host: api.planmyvisit.to
+  found_by:
+  - contract-discovery
+  types: []
+  serves: []
+  registrable_domain: planmyvisit.to
+  role: api
+  relation: other-domain
+- host: github.com
+  found_by:
+  - pointer
+  types:
+  - GitHubOrganization
+  serves: []
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: www.autoura.com
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - docs-index
+  - contract-discovery
+  - well-known
+  types:
+  - Blog
+  - Website
+  - Documentation
+  - APIReference
+  - DeveloperPortal
+  - GettingStarted
+  - Pricing
+  - SignUp
+  - TermsOfService
+  - PrivacyPolicy
+  - Support
+  serves:
+  - docs
+  registrable_domain: autoura.com
+  role: website
+  relation: own
+- host: www.linkedin.com
+  found_by:
+  - pointer
+  types:
+  - LinkedIn
+  serves: []
+  registrable_domain: linkedin.com
+  role: other
+  relation: platform
+- host: www.planmyvisit.to
+  found_by:
+  - probed
+  - contract-discovery
+  - well-known
+  types: []
+  serves: []
+  registrable_domain: planmyvisit.to
+  role: other
+  relation: other-domain

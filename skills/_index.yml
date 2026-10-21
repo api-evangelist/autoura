@@ -55,7 +55,7 @@ skills:
       - preferences_get
       - visit_venues_search
       - visit_knowledge_get
-  - file: autoura-planmyvisit-tool-reference.md
+  - file: autoura-planmyvisit-docs/autoura-planmyvisit-tool-reference.md
     name: PlanMyVisit selected tool reference
     description: >-
       The provider's own prose description of the MCP tool surface, grouped into
@@ -67,7 +67,7 @@ skills:
     method: searched
     http_status: 200
     bytes: 11776
-  - file: autoura-planmyvisit-authentication.md
+  - file: autoura-planmyvisit-docs/autoura-planmyvisit-authentication.md
     name: PlanMyVisit authentication reference
     description: >-
       The identity model (human owner + optional PAI), the three POST identity
