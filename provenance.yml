@@ -20,8 +20,14 @@ artifacts:
   conventions/autoura-conventions.yml:
     method: searched
     evidence: declared in the artifact
+  data-license/autoura-data-license.yml:
+    method: harvested
+    evidence: declared in the artifact
   data-model/autoura-data-model.yml:
     method: searched
+    evidence: declared in the artifact
+  eligibility/autoura-eligibility.yml:
+    method: harvested
     evidence: declared in the artifact
   errors/autoura-problem-types.yml:
     method: searched
@@ -33,6 +39,12 @@ artifacts:
     method: unknown
     evidence: no authorship recorded
   heartbeat/2026-11-02.yml:
+    method: unknown
+    evidence: no authorship recorded
+  heartbeat/2026-11-06.yml:
+    method: unknown
+    evidence: no authorship recorded
+  heartbeat/2026-11-13.yml:
     method: unknown
     evidence: no authorship recorded
   hosts/autoura-hosts.yml:
@@ -47,7 +59,7 @@ artifacts:
   kin/checks-2026-10-23T222754.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
-  kin/checks-2026-11-02T082323.yml:
+  kin/checks-2026-11-06T143934.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-09-23T000603.yml:
@@ -113,6 +125,9 @@ artifacts:
   kin/score-2026-11-02T082323.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-11-06T143934.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
   lifecycle/autoura-lifecycle.yml:
     method: searched
     evidence: declared in the artifact
@@ -133,6 +148,9 @@ artifacts:
     evidence: no authorship recorded
   plans/autoura-plans-pricing.yml:
     method: searched
+    evidence: declared in the artifact
+  privacy/autoura-privacy-policy.yml:
+    method: harvested
     evidence: declared in the artifact
   rate-limits/autoura-rate-limits.yml:
     method: searched
@@ -161,6 +179,9 @@ artifacts:
   skills/autoura-planmyvisit-tool-reference.md:
     method: unknown
     evidence: no authorship recorded
+  terms/autoura-terms-of-service.yml:
+    method: harvested
+    evidence: declared in the artifact
   vendors/autoura-vendors.yml:
     method: unknown
     evidence: no authorship recorded
